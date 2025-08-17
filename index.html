@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zodiac Sign Finder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .input-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+        }
+        .result-section {
+            display: none;
+            margin-top: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px 0;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .zodiac-link {
+            display: block;
+            margin-top: 15px;
+            color: #0066cc;
+            text-decoration: none;
+        }
+        .zodiac-link:hover {
+            text-decoration: underline;
+        }
+        .error {
+            color: red;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Zodiac Sign Finder</h1>
+    
+    <div class="input-section">
+        <h2>Enter Your Birthday</h2>
+        <input type="date" id="birthday" required>
+        <button onclick="findZodiac()">Find My Sign</button>
+        <p>Or enter manually (MM/DD): <input type="text" id="manualDate" placeholder="MM/DD"> 
+        <button onclick="findZodiacManual()">Find</button></p>
+        <div id="errorMessage" class="error"></div>
+    </div>
+    
+    <div class="result-section" id="resultSection">
+        <h2>Your Zodiac Sign: <span id="zodiacName"></span></h2>
+        
+        <table id="zodiacTable">
+            <tr>
+                <th>Element</th>
+                <td id="element"></td>
+            </tr>
+            <tr>
+                <th>Dates</th>
+                <td id="dates"></td>
+            </tr>
+            <tr>
+                <th>Compatibility</th>
+                <td id="compatibility"></td>
+            </tr>
+            <tr>
+                <th>Personality Traits</th>
+                <td id="traits"></td>
+            </tr>
+            <tr>
+                <th>Symbol</th>
+                <td id="symbol"></td>
+            </tr>
+        </table>
+        
+        <a href="#" id="infoLink" class="zodiac-link" target="_blank">Learn more about your zodiac sign</a>
+    </div>
+
+    <script>
+        const zodiacData = {
+            aries: {
+                dates: "March 21 – April 20",
+                element: "Fire",
+                compatibility: "Most compatible with Leo and Sagittarius",
+                traits: "Courageous, Determined, Confident, Enthusiastic, Optimistic",
+                symbol: "Ram ♈",
+                link: "https://www.almanac.com/aries-zodiac-sign"
+            },
+            taurus: {
+                dates: "April 21 – May 20",
+                element: "Earth",
+                compatibility: "Most compatible with Virgo and Capricorn",
+                traits: "Reliable, Patient, Practical, Devoted, Responsible",
+                symbol: "Bull ♉",
+                link: "https://www.almanac.com/taurus-zodiac-sign"
+            },
+            gemini: {
+                dates: "May 21 – June 20",
+                element: "Air",
+                compatibility: "Most compatible with Libra and Aquarius",
+                traits: "Gentle, Affectionate, Curious, Adaptable, Quick-witted",
+                symbol: "Twins ♊",
+                link: "https://www.almanac.com/gemini-zodiac-sign"
+            },
+            cancer: {
+                dates: "June 21 – July 22",
+                element: "Water",
+                compatibility: "Most compatible with Scorpio and Pisces",
+                traits: "Tenacious, Highly imaginative, Loyal, Emotional, Sympathetic",
+                symbol: "Crab ♋",
+                link: "https://www.almanac.com/cancer-zodiac-sign"
+            },
+            leo: {
+                dates: "July 23 – August 22",
+                element: "Fire",
+                compatibility: "Most compatible with Aries and Sagittarius",
+                traits: "Confident, Generous, Loyal, Creative, Strong Willed",
+                symbol: "Lion ♌",
+                link: "https://www.almanac.com/leo-zodiac-sign"
+            },
+            virgo: {
+                dates: "August 23 – September 22",
+                element: "Earth",
+                compatibility: "Most compatible with Taurus and Capricorn",
+                traits: "Loyal, Analytical, Kind, Hardworking, Practical",
+                symbol: "Virgin ♍",
+                link: "https://www.almanac.com/virgo-zodiac-sign"
+            },
+            libra: {
+                dates: "September 23 – October 22",
+                element: "Air",
+                compatibility: "Most compatible with Gemini and Aquarius",
+                traits: "Cooperative, Diplomatic, Gracious, Fair-minded, Social",
+                symbol: "Scales ♎",
+                link: "https://www.almanac.com/libra-zodiac-sign"
+            },
+            scorpio: {
+                dates: "October 23 – November 22",
+                element: "Water",
+                compatibility: "Most compatible with Cancer and Pisces",
+                traits: "Resourceful, Brave, Passionate, Stubborn, True friend",
+                symbol: "Scorpion ♏",
+                link: "https://www.almanac.com/scorpio-zodiac-sign"
+            },
+            sagittarius: {
+                dates: "November 23 – December 21",
+                element: "Fire",
+                compatibility: "Most compatible with Aries and Leo",
+                traits: "Generous, Idealistic, Great sense of humor, Adventurous",
+                symbol: "Archer ♐",
+                link: "https://www.almanac.com/sagittarius-zodiac-sign"
+            },
+            capricorn: {
+                dates: "December 22 – January 19",
+                element: "Earth",
+                compatibility: "Most compatible with Taurus and Virgo",
+                traits: "Responsible, Disciplined, Self-control, Good managers",
+                symbol: "Goat ♑",
+                link: "https://www.almanac.com/capricorn-zodiac-sign"
+            },
+            aquarius: {
+                dates: "January 20 – February 19",
+                element: "Air",
+                compatibility: "Most compatible with Gemini and Libra",
+                traits: "Progressive, Original, Independent, Humanitarian",
+                symbol: "Water Bearer ♒",
+                link: "https://www.almanac.com/aquarius-zodiac-sign"
+            },
+            pisces: {
+                dates: "February 20 – March 20",
+                element: "Water",
+                compatibility: "Most compatible with Cancer and Scorpio",
+                traits: "Compassionate, Artistic, Intuitive, Gentle, Wise",
+                symbol: "Fish ♓",
+                link: "https://www.almanac.com/pisces-zodiac-sign"
+            }
+        };
+
+        function showError(message) {
+            document.getElementById('errorMessage').textContent = message;
+        }
+
+        function clearError() {
+            document.getElementById('errorMessage').textContent = '';
+        }
+
+        function findZodiac() {
+            clearError();
+            const birthdayInput = document.getElementById('birthday').value;
+            
+            if (!birthdayInput) {
+                showError('Please enter your birthday');
+                return;
+            }
+            
+            const date = new Date(birthdayInput);
+            const month = date.getMonth() + 1; // JavaScript months are 0-11
+            const day = date.getDate();
+            
+            console.log(`Processing date: Month ${month}, Day ${day}`); // Debug log
+            
+            displayZodiacInfo(getZodiacSign(month, day));
+        }
+
+        function findZodiacManual() {
+            clearError();
+            const manualDate = document.getElementById('manualDate').value.trim();
+            
+            if (!manualDate) {
+                showError('Please enter your birthday in MM/DD format');
+                return;
+            }
+            
+            const dateParts = manualDate.split('/');
+            if (dateParts.length !== 2) {
+                showError('Please enter date in MM/DD format');
+                return;
+            }
+            
+            const month = parseInt(dateParts[0]);
+            const day = parseInt(dateParts[1]);
+            
+            if (isNaN(month) || isNaN(day)) {
+                showError('Please enter valid numbers for month and day');
+                return;
+            }
+            
+            if (month < 1 || month > 12) {
+                showError('Month must be between 1 and 12');
+                return;
+            }
+            
+            if (day < 1 || day > 31) {
+                showError('Day must be between 1 and 31');
+                return;
+            }
+            
+            console.log(`Processing manual date: Month ${month}, Day ${day}`); // Debug log
+            
+            displayZodiacInfo(getZodiacSign(month, day));
+        }
+
+        function getZodiacSign(month, day) {
+    console.log(`Getting zodiac for ${month}/${day}`); // Debug log
+
+    if ((month === 3 && day >= 21) || (month === 4 && day <= 20)) return 'aries';
+    if ((month === 4 && day >= 21) || (month === 5 && day <= 20)) return 'taurus';
+    if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) return 'gemini';
+    if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) return 'cancer';
+    if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return 'leo';
+    if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return 'virgo';
+    if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) return 'libra';
+    if ((month === 10 && day >= 23) || (month === 11 && day <= 22)) return 'scorpio';
+    if ((month === 11 && day >= 23) || (month === 12 && day <= 21)) return 'sagittarius';
+    if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) return 'capricorn';
+    if ((month === 1 && day >= 20) || (month === 2 && day <= 19)) return 'aquarius';
+    if ((month === 2 && day >= 20) || (month === 3 && day <= 20)) return 'pisces';
+
+    console.log('No zodiac sign found for this date'); // Debug log
+    return null;
+}
+
+
+        function displayZodiacInfo(sign) {
+            if (!sign) {
+                showError('Could not determine zodiac sign. Please check your birth date.');
+                return;
+            }
+            
+            console.log(`Displaying info for ${sign}`); // Debug log
+            
+            const data = zodiacData[sign];
+            const capitalizedSign = sign.charAt(0).toUpperCase() + sign.slice(1);
+            
+            document.getElementById('zodiacName').textContent = capitalizedSign;
+            document.getElementById('element').textContent = data.element;
+            document.getElementById('dates').textContent = data.dates;
+            document.getElementById('compatibility').textContent = data.compatibility;
+            document.getElementById('traits').textContent = data.traits;
+            document.getElementById('symbol').textContent = data.symbol;
+            document.getElementById('infoLink').href = data.link;
+            document.getElementById('infoLink').textContent = `Learn more about ${capitalizedSign}`;
+            
+            document.getElementById('resultSection').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
