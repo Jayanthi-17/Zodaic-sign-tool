@@ -6,7 +6,7 @@
     <title>Zodiac Sign Finder</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
-        :root {
+         :root {
             --primary: #ad2a24;
             --primary-hover: #c2332c;
             --background: #f6f1e7;
@@ -108,25 +108,7 @@
             font-size: 1.07em;
             border: none;
             padding: 10px;
-            position: fixed !important; /* Changed to fixed */
-            top: 50% !important;
-            left: 50% !important;
-            transform: translate(-50%, -50%) !important;
-            z-index: 100000 !important;
-            width: auto !important;
         }
-        .flatpickr-calendar:before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 99999;
-            pointer-events: none;
-        }
-
         .flatpickr-months .flatpickr-month {
             color: var(--text);
             font-weight: bold;
@@ -250,8 +232,8 @@
         .flatpickr-calendar.open {
             position: absolute;
             z-index: 99999;
-            top: calc(50% + 5px) !important;
-            left: 50 !important;
+            top: calc(100% + 5px) !important;
+            left: 0 !important;
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -319,10 +301,13 @@
                 flex-direction: column;
             }
         }
+        
+        
+        
     </style>
 </head>
 <body>
-    <div class="container">
+     <div class="container">
         <header>
             <h1>Zodiac Sign Finder</h1>
         </header>
@@ -369,9 +354,9 @@
             </div>
         </div>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
+        // Custom Confirm Date plugin for Select/Cancel buttons in calendar
         function confirmDatePlugin(pluginConfig) {
             return function(fp) {
                 let confirmContainer;
@@ -407,45 +392,43 @@
             altFormat: "F j, Y",
             dateFormat: "Y-m-d",
             allowInput: false,
-            clickOpens: true,
-            static: false,
-            position: "auto",
+            clickOpens: true, // Changed to true to allow date selection
+            static: false,    // Changed to false for better positioning
+            position: "below", // Explicitly position below input
             monthSelectorType: "static",
             plugins: [confirmDatePlugin({
                 confirmText: "Select",
                 cancelText: "Cancel"
             })],
-            onOpen: function(selectedDates, dateStr, instance) {
-                // Add overlay when calendar opens
-                const overlay = document.createElement('div');
-                overlay.className = 'calendar-overlay';
-                overlay.style.position = 'fixed';
-                overlay.style.top = '0';
-                overlay.style.left = '0';
-                overlay.style.right = '0';
-                overlay.style.bottom = '0';
-                overlay.style.background = 'rgba(0,0,0,0.5)';
-                overlay.style.zIndex = '99999';
-                overlay.onclick = function() {
-                    calendar.close();
-                };
-                document.body.appendChild(overlay);
+            onOpen: function() {
+                // Disable background interaction
+                document.body.style.pointerEvents = 'none';
+                document.getElementById('calendarBtn').style.pointerEvents = 'auto';
+                dateInput.style.pointerEvents = 'auto';
+                
+                // Adjust calendar position if needed
+                setTimeout(() => {
+                    const calendarElem = document.querySelector('.flatpickr-calendar');
+                    if (calendarElem) {
+                        calendarElem.style.left = '0';
+                        calendarElem.style.top = 'calc(100% + 5px)';
+                    }
+                }, 10);
             },
             onClose: function() {
-                // Remove overlay when calendar closes
-                const overlay = document.querySelector('.calendar-overlay');
-                if (overlay) {
-                    overlay.remove();
-                }
+                // Re-enable background interaction
+                document.body.style.pointerEvents = 'auto';
             },
             onChange: function(selectedDates, dateStr, instance) {
                 if (selectedDates.length > 0) {
+                    // Format the date nicely for display
                     const formattedDate = instance.formatDate(selectedDates[0], "F j, Y");
                     dateInput.value = formattedDate;
                 }
             }
         });
 
+        // Open calendar on button click
         document.getElementById('calendarBtn').addEventListener('click', function() {
             calendar.open();
         });
@@ -558,5 +541,3 @@
             document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
         }
     </script>
-</body>
-</html>
