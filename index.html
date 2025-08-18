@@ -4,302 +4,429 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zodiac Sign Finder</title>
+    <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
+        :root {
+            --primary: #ad2a24;
+            --primary-hover: #c2332c;
+            --background: #f6f1e7;
+            --heading: #52313b;
+            --card-bg: #ffffff;
+            --border: #e0d9cc;
+            --text: #333333;
+            --text-light: #666666;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
             max-width: 600px;
             margin: 0 auto;
-            padding: 20px;
-        }
-        .input-section {
-            margin-bottom: 30px;
-            padding: 20px;
-            background-color: #f5f5f5;
+            background-color: var(--card-bg);
             border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
         }
-        .result-section {
-            display: none;
-            margin-top: 30px;
+
+        header {
+            background-color: transparent;
+            color: var(--heading);
+            padding: 20px;
+            text-align: center;
         }
-        table {
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .content {
+            padding: 25px;
+        }
+
+        .input-section {
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--heading);
+        }
+
+        /* Hide default calendar icon */
+        input[type="text"].flatpickr-input {
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
+            padding: 14px 20px;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            font-size: 1.2rem;
+            background: #fff;
+            color: var(--heading);
+            box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+            appearance: none;
+            outline: none;
+            transition: border-color 0.2s;
         }
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
+        input[type="text"].flatpickr-input:focus {
+            border-color: var(--primary-hover);
         }
-        th {
-            background-color: #f2f2f2;
-        }
-        input, button {
-            padding: 10px;
-            margin: 5px 0;
-        }
-        button {
-            background-color: #4CAF50;
+        .btn {
+            background-color: var(--primary);
             color: white;
             border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.2s;
+            display: block;
+            margin-top: 18px;
+            width: 100%;
             cursor: pointer;
         }
-        button:hover {
-            background-color: #45a049;
+
+        .btn:hover {
+            background-color: var(--primary-hover);
         }
-        .zodiac-link {
-            display: block;
+
+        .error {
+            color: #d32f2f;
+            margin-top: 5px;
+            font-size: 0.9rem;
+        }
+
+        .result-section {
+            display: none;
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 8px;
+            margin-top: 30px;
+            border: 1px solid var(--border);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-section h2 {
+            color: var(--heading);
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+
+        .zodiac-info {
             margin-top: 15px;
-            color: #0066cc;
-            text-decoration: none;
         }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .info-label {
+            font-weight: 600;
+            width: 150px;
+            color: var(--heading);
+        }
+
+        .info-value {
+            flex: 1;
+        }
+
+        .zodiac-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
         .zodiac-link:hover {
             text-decoration: underline;
         }
-        .error {
-            color: red;
-            margin-top: 5px;
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .button-group .btn {
+            flex: 1;
+        }
+
+        /* Flatpickr customizations for a style similar to your screenshot */
+        .flatpickr-calendar {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 5px 32px rgba(173, 42, 36, 0.10);
+            font-family: inherit;
+            font-size: 1.1em;
+            border: none;
+        }
+        .flatpickr-months .flatpickr-month {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.26em;
+        }
+        .flatpickr-weekdays,
+        .flatpickr-days {
+            font-size: 1.06em;
+        }
+        .flatpickr-day {
+            border-radius: 8px;
+        }
+        .flatpickr-day.selected,
+        .flatpickr-day.today {
+            background-color: var(--primary) !important;
+            color: #fff !important;
+        }
+        .flatpickr-weekday {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        .flatpickr-current-month input.cur-month {
+            color: var(--primary);
+        }
+        .flatpickr-monthDropdown-months,
+        .flatpickr-current-month .numInputWrapper {
+            color: var(--text);
+        }
+        .flatpickr-day:hover {
+            background: var(--primary-hover);
+            color: #fff;
+        }
+        .flatpickr-button.flatpickr-confirm {
+            background: var(--primary) !important;
+            color: #fff !important;
+            border-radius: 6px;
+            margin-left: 6px;
+            padding: 7px 18px;
+            font-weight: 600;
+            border: none;
+        }
+        .flatpickr-button.flatpickr-cancel {
+            background: #fff !important;
+            color: var(--primary) !important;
+            border-radius: 6px;
+            padding: 7px 18px;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 2px rgba(0,0,0,0.09);
+        }
+
+        @media (max-width: 480px) {
+            .content {
+                padding: 15px;
+            }
+            .info-row {
+                flex-direction: column;
+            }
+            .info-label {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+            .button-group {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
-    
-    
-    <div class="input-section">
-        <h2>Zodiac Sign Finder</h2>
-        <h4>Enter Your Birthday</h4>
-        <input type="date" id="birthday" required>
-        <button onclick="findZodiac()">Find My Sign</button>
-        <p>Or enter manually (MM/DD): <input type="text" id="manualDate" placeholder="MM/DD"> 
-        <button onclick="findZodiacManual()">Find</button></p>
-        <div id="errorMessage" class="error"></div>
+    <div class="container">
+        <header>
+            <h1>Zodiac Sign Finder</h1>
+        </header>
+        <div class="content">
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="birthday">Enter Your Birthday</label>
+                    <input type="text" id="birthday" required readonly placeholder="Pick Date">
+                    <button class="btn" onclick="findZodiac()">Find My Sign</button>
+                </div>
+                <div id="errorMessage" class="error"></div>
+            </div>
+            <div class="result-section" id="resultSection">
+                <h2>Your Zodiac Sign: <span id="zodiacName"></span></h2>
+                <div class="zodiac-info">
+                    <div class="info-row">
+                        <div class="info-label">Element</div>
+                        <div class="info-value" id="element"></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Dates</div>
+                        <div class="info-value" id="dates"></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Compatibility</div>
+                        <div class="info-value" id="compatibility"></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Personality Traits</div>
+                        <div class="info-value" id="traits"></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Symbol</div>
+                        <div class="info-value" id="symbol"></div>
+                    </div>
+                </div>
+                <div class="button-group">
+                    <a href="#" id="infoLink" class="btn" target="_blank">Learn More</a>
+                    <button class="btn btn-secondary" onclick="clearResults()">Clear Results</button>
+                </div>
+            </div>
+        </div>
     </div>
-    
-    <div class="result-section" id="resultSection">
-        <h2>Your Zodiac Sign: <span id="zodiacName"></span></h2>
-        
-        <table id="zodiacTable">
-            <tr>
-                <th>Element</th>
-                <td id="element"></td>
-            </tr>
-            <tr>
-                <th>Dates</th>
-                <td id="dates"></td>
-            </tr>
-            <tr>
-                <th>Compatibility</th>
-                <td id="compatibility"></td>
-            </tr>
-            <tr>
-                <th>Personality Traits</th>
-                <td id="traits"></td>
-            </tr>
-            <tr>
-                <th>Symbol</th>
-                <td id="symbol"></td>
-            </tr>
-        </table>
-        
-        <a href="#" id="infoLink" class="zodiac-link" target="_blank">Learn more about your zodiac sign</a>
-    </div>
-
+    <!-- Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
-        const zodiacData = {
-            aries: {
-                dates: "March 21 – April 20",
-                element: "Fire",
-                compatibility: "Most compatible with Leo and Sagittarius",
-                traits: "Courageous, Determined, Confident, Enthusiastic, Optimistic",
-                symbol: "Ram ♈",
-                link: "https://www.almanac.com/aries-zodiac-sign"
-            },
-            taurus: {
-                dates: "April 21 – May 20",
-                element: "Earth",
-                compatibility: "Most compatible with Virgo and Capricorn",
-                traits: "Reliable, Patient, Practical, Devoted, Responsible",
-                symbol: "Bull ♉",
-                link: "https://www.almanac.com/taurus-zodiac-sign"
-            },
-            gemini: {
-                dates: "May 21 – June 20",
-                element: "Air",
-                compatibility: "Most compatible with Libra and Aquarius",
-                traits: "Gentle, Affectionate, Curious, Adaptable, Quick-witted",
-                symbol: "Twins ♊",
-                link: "https://www.almanac.com/gemini-zodiac-sign"
-            },
-            cancer: {
-                dates: "June 21 – July 22",
-                element: "Water",
-                compatibility: "Most compatible with Scorpio and Pisces",
-                traits: "Tenacious, Highly imaginative, Loyal, Emotional, Sympathetic",
-                symbol: "Crab ♋",
-                link: "https://www.almanac.com/cancer-zodiac-sign"
-            },
-            leo: {
-                dates: "July 23 – August 22",
-                element: "Fire",
-                compatibility: "Most compatible with Aries and Sagittarius",
-                traits: "Confident, Generous, Loyal, Creative, Strong Willed",
-                symbol: "Lion ♌",
-                link: "https://www.almanac.com/leo-zodiac-sign"
-            },
-            virgo: {
-                dates: "August 23 – September 22",
-                element: "Earth",
-                compatibility: "Most compatible with Taurus and Capricorn",
-                traits: "Loyal, Analytical, Kind, Hardworking, Practical",
-                symbol: "Virgin ♍",
-                link: "https://www.almanac.com/virgo-zodiac-sign"
-            },
-            libra: {
-                dates: "September 23 – October 22",
-                element: "Air",
-                compatibility: "Most compatible with Gemini and Aquarius",
-                traits: "Cooperative, Diplomatic, Gracious, Fair-minded, Social",
-                symbol: "Scales ♎",
-                link: "https://www.almanac.com/libra-zodiac-sign"
-            },
-            scorpio: {
-                dates: "October 23 – November 22",
-                element: "Water",
-                compatibility: "Most compatible with Cancer and Pisces",
-                traits: "Resourceful, Brave, Passionate, Stubborn, True friend",
-                symbol: "Scorpion ♏",
-                link: "https://www.almanac.com/scorpio-zodiac-sign"
-            },
-            sagittarius: {
-                dates: "November 23 – December 21",
-                element: "Fire",
-                compatibility: "Most compatible with Aries and Leo",
-                traits: "Generous, Idealistic, Great sense of humor, Adventurous",
-                symbol: "Archer ♐",
-                link: "https://www.almanac.com/sagittarius-zodiac-sign"
-            },
-            capricorn: {
-                dates: "December 22 – January 19",
-                element: "Earth",
-                compatibility: "Most compatible with Taurus and Virgo",
-                traits: "Responsible, Disciplined, Self-control, Good managers",
-                symbol: "Goat ♑",
-                link: "https://www.almanac.com/capricorn-zodiac-sign"
-            },
-            aquarius: {
-                dates: "January 20 – February 19",
-                element: "Air",
-                compatibility: "Most compatible with Gemini and Libra",
-                traits: "Progressive, Original, Independent, Humanitarian",
-                symbol: "Water Bearer ♒",
-                link: "https://www.almanac.com/aquarius-zodiac-sign"
-            },
-            pisces: {
-                dates: "February 20 – March 20",
-                element: "Water",
-                compatibility: "Most compatible with Cancer and Scorpio",
-                traits: "Compassionate, Artistic, Intuitive, Gentle, Wise",
-                symbol: "Fish ♓",
-                link: "https://www.almanac.com/pisces-zodiac-sign"
-            }
-        };
+        // Flatpickr initialization with Confirm Date plugin for Select/Cancel buttons
+        flatpickr("#birthday", {
+            dateFormat: "Y-m-d",
+            allowInput: false,
+            clickOpens: true,
+            defaultDate: "",
+            altInput: false,
+            position: "auto center",
+            // Confirm Date plugin for custom select/cancel buttons like your screenshot
+            plugins: [new confirmDatePlugin({
+                confirmText: "Select",
+                showAlways: false,
+                theme: "light",
+                cancelText: "Cancel"
+            })]
+        });
 
+        // Confirm Date plugin
+        function confirmDatePlugin(pluginConfig) {
+            return function(fp) {
+                let confirmContainer;
+                return {
+                    onReady: function() {
+                        confirmContainer = fp._createElement("div", "flatpickr-confirm-container");
+                        confirmContainer.style.textAlign = "right";
+
+                        const cancelBtn = fp._createElement("button", "flatpickr-button flatpickr-cancel");
+                        cancelBtn.textContent = pluginConfig.cancelText || "Cancel";
+                        cancelBtn.type = "button";
+                        cancelBtn.onclick = function(e) {
+                            fp.close();
+                        };
+
+                        const confirmBtn = fp._createElement("button", "flatpickr-button flatpickr-confirm");
+                        confirmBtn.textContent = pluginConfig.confirmText || "Select";
+                        confirmBtn.type = "button";
+                        confirmBtn.onclick = function(e) {
+                            fp.close();
+                        };
+                        confirmContainer.appendChild(cancelBtn);
+                        confirmContainer.appendChild(confirmBtn);
+
+                        fp.calendarContainer.appendChild(confirmContainer);
+                    },
+                    onOpen: function() {
+                        // Focus for accessibility
+                        setTimeout(() => {
+                            let btns = confirmContainer.querySelectorAll('button');
+                            if (btns && btns.length) btns[0].focus();
+                        }, 250);
+                    }
+                };
+            };
+        }
+
+        // Zodiac logic
+        const zodiacData = {
+            aries: {dates: "March 21 – April 20",element: "Fire",compatibility: "Most compatible with Leo and Sagittarius",traits: "Courageous, Determined, Confident, Enthusiastic, Optimistic",symbol: "Ram ♈",link: "https://www.almanac.com/aries-zodiac-sign"},
+            taurus: {dates: "April 21 – May 20",element: "Earth",compatibility: "Most compatible with Virgo and Capricorn",traits: "Reliable, Patient, Practical, Devoted, Responsible",symbol: "Bull ♉",link: "https://www.almanac.com/taurus-zodiac-sign"},
+            gemini: {dates: "May 21 – June 20",element: "Air",compatibility: "Most compatible with Libra and Aquarius",traits: "Gentle, Affectionate, Curious, Adaptable, Quick-witted",symbol: "Twins ♊",link: "https://www.almanac.com/gemini-zodiac-sign"},
+            cancer: {dates: "June 21 – July 22",element: "Water",compatibility: "Most compatible with Scorpio and Pisces",traits: "Tenacious, Highly imaginative, Loyal, Emotional, Sympathetic",symbol: "Crab ♋",link: "https://www.almanac.com/cancer-zodiac-sign"},
+            leo: {dates: "July 23 – August 22",element: "Fire",compatibility: "Most compatible with Aries and Sagittarius",traits: "Confident, Generous, Loyal, Creative, Strong Willed",symbol: "Lion ♌",link: "https://www.almanac.com/leo-zodiac-sign"},
+            virgo: {dates: "August 23 – September 22",element: "Earth",compatibility: "Most compatible with Taurus and Capricorn",traits: "Loyal, Analytical, Kind, Hardworking, Practical",symbol: "Virgin ♍",link: "https://www.almanac.com/virgo-zodiac-sign"},
+            libra: {dates: "September 23 – October 22",element: "Air",compatibility: "Most compatible with Gemini and Aquarius",traits: "Cooperative, Diplomatic, Gracious, Fair-minded, Social",symbol: "Scales ♎",link: "https://www.almanac.com/libra-zodiac-sign"},
+            scorpio: {dates: "October 23 – November 22",element: "Water",compatibility: "Most compatible with Cancer and Pisces",traits: "Resourceful, Brave, Passionate, Stubborn, True friend",symbol: "Scorpion ♏",link: "https://www.almanac.com/scorpio-zodiac-sign"},
+            sagittarius: {dates: "November 23 – December 21",element: "Fire",compatibility: "Most compatible with Aries and Leo",traits: "Generous, Idealistic, Great sense of humor, Adventurous",symbol: "Archer ♐",link: "https://www.almanac.com/sagittarius-zodiac-sign"},
+            capricorn: {dates: "December 22 – January 19",element: "Earth",compatibility: "Most compatible with Taurus and Virgo",traits: "Responsible, Disciplined, Self-control, Good managers",symbol: "Goat ♑",link: "https://www.almanac.com/capricorn-zodiac-sign"},
+            aquarius: {dates: "January 20 – February 19",element: "Air",compatibility: "Most compatible with Gemini and Libra",traits: "Progressive, Original, Independent, Humanitarian",symbol: "Water Bearer ♒",link: "https://www.almanac.com/aquarius-zodiac-sign"},
+            pisces: {dates: "February 20 – March 20",element: "Water",compatibility: "Most compatible with Cancer and Scorpio",traits: "Compassionate, Artistic, Intuitive, Gentle, Wise",symbol: "Fish ♓",link: "https://www.almanac.com/pisces-zodiac-sign"}
+        };
         function showError(message) {
             document.getElementById('errorMessage').textContent = message;
         }
-
         function clearError() {
             document.getElementById('errorMessage').textContent = '';
         }
-
+        function clearResults() {
+            document.getElementById('resultSection').style.display = 'none';
+            document.getElementById('birthday').value = '';
+            clearError();
+        }
         function findZodiac() {
             clearError();
             const birthdayInput = document.getElementById('birthday').value;
-            
             if (!birthdayInput) {
                 showError('Please enter your birthday');
                 return;
             }
-            
             const date = new Date(birthdayInput);
-            const month = date.getMonth() + 1; // JavaScript months are 0-11
+            const month = date.getMonth() + 1;
             const day = date.getDate();
-            
-            console.log(`Processing date: Month ${month}, Day ${day}`); // Debug log
-            
             displayZodiacInfo(getZodiacSign(month, day));
         }
-
-        function findZodiacManual() {
-            clearError();
-            const manualDate = document.getElementById('manualDate').value.trim();
-            
-            if (!manualDate) {
-                showError('Please enter your birthday in MM/DD format');
-                return;
-            }
-            
-            const dateParts = manualDate.split('/');
-            if (dateParts.length !== 2) {
-                showError('Please enter date in MM/DD format');
-                return;
-            }
-            
-            const month = parseInt(dateParts[0]);
-            const day = parseInt(dateParts[1]);
-            
-            if (isNaN(month) || isNaN(day)) {
-                showError('Please enter valid numbers for month and day');
-                return;
-            }
-            
-            if (month < 1 || month > 12) {
-                showError('Month must be between 1 and 12');
-                return;
-            }
-            
-            if (day < 1 || day > 31) {
-                showError('Day must be between 1 and 31');
-                return;
-            }
-            
-            console.log(`Processing manual date: Month ${month}, Day ${day}`); // Debug log
-            
-            displayZodiacInfo(getZodiacSign(month, day));
-        }
-
         function getZodiacSign(month, day) {
-    console.log(`Getting zodiac for ${month}/${day}`); // Debug log
-
-    if ((month === 3 && day >= 21) || (month === 4 && day <= 20)) return 'aries';
-    if ((month === 4 && day >= 21) || (month === 5 && day <= 20)) return 'taurus';
-    if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) return 'gemini';
-    if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) return 'cancer';
-    if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return 'leo';
-    if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return 'virgo';
-    if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) return 'libra';
-    if ((month === 10 && day >= 23) || (month === 11 && day <= 22)) return 'scorpio';
-    if ((month === 11 && day >= 23) || (month === 12 && day <= 21)) return 'sagittarius';
-    if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) return 'capricorn';
-    if ((month === 1 && day >= 20) || (month === 2 && day <= 19)) return 'aquarius';
-    if ((month === 2 && day >= 20) || (month === 3 && day <= 20)) return 'pisces';
-
-    console.log('No zodiac sign found for this date'); // Debug log
-    return null;
-}
-
-
+            if ((month === 3 && day >= 21) || (month === 4 && day <= 20)) return 'aries';
+            if ((month === 4 && day >= 21) || (month === 5 && day <= 20)) return 'taurus';
+            if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) return 'gemini';
+            if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) return 'cancer';
+            if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return 'leo';
+            if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return 'virgo';
+            if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) return 'libra';
+            if ((month === 10 && day >= 23) || (month === 11 && day <= 22)) return 'scorpio';
+            if ((month === 11 && day >= 23) || (month === 12 && day <= 21)) return 'sagittarius';
+            if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) return 'capricorn';
+            if ((month === 1 && day >= 20) || (month === 2 && day <= 19)) return 'aquarius';
+            if ((month === 2 && day >= 20) || (month === 3 && day <= 20)) return 'pisces';
+            return null;
+        }
         function displayZodiacInfo(sign) {
             if (!sign) {
                 showError('Could not determine zodiac sign. Please check your birth date.');
                 return;
             }
-            
-            console.log(`Displaying info for ${sign}`); // Debug log
-            
             const data = zodiacData[sign];
             const capitalizedSign = sign.charAt(0).toUpperCase() + sign.slice(1);
-            
             document.getElementById('zodiacName').textContent = capitalizedSign;
             document.getElementById('element').textContent = data.element;
             document.getElementById('dates').textContent = data.dates;
@@ -307,9 +434,8 @@
             document.getElementById('traits').textContent = data.traits;
             document.getElementById('symbol').textContent = data.symbol;
             document.getElementById('infoLink').href = data.link;
-            document.getElementById('infoLink').textContent = `Learn more about ${capitalizedSign}`;
-            
             document.getElementById('resultSection').style.display = 'block';
+            document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
         }
     </script>
 </body>
