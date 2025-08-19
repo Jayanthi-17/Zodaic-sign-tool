@@ -6,7 +6,19 @@
     <title>Zodiac Sign Finder</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
-        :root {
+        /* Global styles only for the body */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #fff;
+            color: #333333;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+            margin: 0;
+        }
+        
+        /* All styles are now scoped within the CalculatorContainer */
+        #CalculatorContainer {
             --primary: #ad2a24;
             --primary-hover: #c2332c;
             --background: #f6f1e7;
@@ -16,21 +28,14 @@
             --text: #333333;
             --text-light: #666666;
         }
-
-        * {
+        
+        #CalculatorContainer * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: fff;
-            color: var(--text);
-            min-height: 100vh;
-            padding: 20px;
-            line-height: 1.6;
-        }
-        .container {
+        
+        #CalculatorContainer .container {
             max-width: 600px;
             margin: 0 auto;
             background-color: #f9f6ee;
@@ -38,37 +43,45 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             overflow: hidden;
         }
-        header {
+        
+        #CalculatorContainer header {
             background-color: transparent;
             color: var(--heading);
             padding: 10px;
             text-align: center;
         }
-        h2 {
-            color:#553a4d;
+        
+        #CalculatorContainer h2 {
+            color: #553a4d;
             font-size: 1.8rem;
             font-weight: 600;
         }
-        .content {
+        
+        #CalculatorContainer .content {
             padding: 25px;
         }
-        .input-section {
+        
+        #CalculatorContainer .input-section {
             margin-bottom: 25px;
         }
-        .input-group {
+        
+        #CalculatorContainer .input-group {
             margin-bottom: 22px;
         }
-        label {
+        
+        #CalculatorContainer label {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
             color: #af6b35;
         }
-        .date-input-container {
+        
+        #CalculatorContainer .date-input-container {
             display: flex;
             gap: 10px;
         }
-        .date-input {
+        
+        #CalculatorContainer .date-input {
             flex: 1;
             padding: 14px 20px;
             font-size: 1.05rem;
@@ -80,10 +93,12 @@
             outline: none;
             transition: border-color 0.2s;
         }
-        .date-input:focus {
+        
+        #CalculatorContainer .date-input:focus {
             border-color: var(--primary);
         }
-        .calendar-btn {
+        
+        #CalculatorContainer .calendar-btn {
             background-color: var(--primary);
             color: #fff;
             border: none;
@@ -98,10 +113,13 @@
             align-items: center;
             justify-content: center;
         }
-        .calendar-btn:hover, .calendar-btn:focus {
+        
+        #CalculatorContainer .calendar-btn:hover, 
+        #CalculatorContainer .calendar-btn:focus {
             background-color: var(--primary-hover);
         }
-        .flatpickr-calendar {
+        
+        #CalculatorContainer .flatpickr-calendar {
             background: #fff;
             border-radius: 15px;
             box-shadow: 0 5px 32px rgba(173, 42, 36, 0.10);
@@ -109,14 +127,15 @@
             font-size: 1.07em;
             border: none;
             padding: 10px;
-            position: fixed !important; /* Changed to fixed */
+            position: fixed !important;
             top: 50% !important;
             left: 50% !important;
             transform: translate(-50%, -50%) !important;
             z-index: 100000 !important;
             width: auto !important;
         }
-        .flatpickr-calendar:before {
+        
+        #CalculatorContainer .flatpickr-calendar:before {
             content: '';
             position: fixed;
             top: 0;
@@ -128,47 +147,53 @@
             pointer-events: none;
         }
 
-        .flatpickr-months .flatpickr-month {
-    color: #ad2a24;  
-    font-weight: bold;
-    font-size: 1em;
-    height: 40px;
-}
+        #CalculatorContainer .flatpickr-months .flatpickr-month {
+            color: #ad2a24;  
+            font-weight: bold;
+            font-size: 1em;
+            height: 40px;
+        }
 
-        .flatpickr-weekdays,
-        .flatpickr-days {
+        #CalculatorContainer .flatpickr-weekdays,
+        #CalculatorContainer .flatpickr-days {
             font-size: 1.06em;
         }
-        .flatpickr-day {
+        
+        #CalculatorContainer .flatpickr-day {
             border-radius: 8px;
             height: 36px;
             line-height: 36px;
             margin: 2px;
         }
-        .flatpickr-day.selected,
-        .flatpickr-day.today {
+        
+        #CalculatorContainer .flatpickr-day.selected,
+        #CalculatorContainer .flatpickr-day.today {
             background-color: var(--primary) !important;
             color: #fff !important;
             border-color: var(--primary) !important;
         }
-        .flatpickr-weekday {
-    color: #ad2a24;
-    font-weight: 600;
-}
-
-        .flatpickr-current-month input.cur-year {
-            color:#ad2a24;
+        
+        #CalculatorContainer .flatpickr-weekday {
+            color: #ad2a24;
             font-weight: 600;
         }
-        .flatpickr-monthDropdown-months,
-        .flatpickr-current-month .numInputWrapper {
+
+        #CalculatorContainer .flatpickr-current-month input.cur-year {
+            color: #ad2a24;
+            font-weight: 600;
+        }
+        
+        #CalculatorContainer .flatpickr-monthDropdown-months,
+        #CalculatorContainer .flatpickr-current-month .numInputWrapper {
             color: var(--text);
         }
-        .flatpickr-day:hover {
+        
+        #CalculatorContainer .flatpickr-day:hover {
             background: var(--primary-hover);
             color: #fff;
         }
-        .flatpickr-button.flatpickr-confirm {
+        
+        #CalculatorContainer .flatpickr-button.flatpickr-confirm {
             background: var(--primary) !important;
             color: #fff !important;
             border-radius: 6px;
@@ -177,7 +202,8 @@
             font-weight: 600;
             border: none;
         }
-        .flatpickr-button.flatpickr-cancel {
+        
+        #CalculatorContainer .flatpickr-button.flatpickr-cancel {
             background: #fff !important;
             color: var(--text) !important;
             border-radius: 6px;
@@ -186,26 +212,29 @@
             border: 1px solid var(--border);
             box-shadow: 0 2px 2px rgba(0,0,0,0.09);
         }
-        .flatpickr-confirm-container {
+        
+        #CalculatorContainer .flatpickr-confirm-container {
             padding: 10px;
             border-top: 1px solid var(--border);
             margin-top: 5px;
         }
-        .flatpickr-weekday {
-    color: #ad2a24 !important;
-    font-weight: 600;
-}
+        
+        #CalculatorContainer .flatpickr-weekday {
+            color: #ad2a24 !important;
+            font-weight: 600;
+        }
 
         /* Manual date dropdowns */
-        .manual-date-container {
+        #CalculatorContainer .manual-date-container {
             display: flex;
             gap: 10px;
         }
-        .date-dropdown {
+        
+        #CalculatorContainer .date-dropdown {
             flex: 1;
             padding: 14px 15px;
             font-size: 1.05rem;
-            border: 2px solid #d9d0d0 ;
+            border: 2px solid var(--border);
             border-radius: 8px;
             background: #fff;
             color: var(--heading);
@@ -220,15 +249,17 @@
             background-position: right 15px center;
             background-size: 16px;
         }
-        .date-dropdown:focus {
+        
+        #CalculatorContainer .date-dropdown:focus {
             border-color: var(--primary-hover);
         }
-        .date-dropdown.year {
+        
+        #CalculatorContainer .date-dropdown.year {
             flex: 1.2;
         }
 
-        .btn {
-            background-color:#b43a22;
+        #CalculatorContainer .btn {
+            background-color: #b43a22;
             color: white;
             border: none;
             padding: 12px 25px;
@@ -241,16 +272,19 @@
             width: 100%;
             cursor: pointer;
         }
-        .btn:hover, .btn:focus {
+        
+        #CalculatorContainer .btn:hover, 
+        #CalculatorContainer .btn:focus {
             background-color: #98301e;
         }
 
-        .error {
+        #CalculatorContainer .error {
             color: #d32f2f;
             margin-top: 5px;
             font-size: 0.95rem;
         }
-        .result-section {
+        
+        #CalculatorContainer .result-section {
             display: none;
             background-color: var(--card-bg);
             padding: 25px;
@@ -259,7 +293,8 @@
             border: 1px solid var(--border);
             animation: fadeIn 0.3s ease-out;
         }
-        .flatpickr-calendar {
+        
+        #CalculatorContainer .flatpickr-calendar {
             background: #fff;
             border-radius: 7px;
             box-shadow: 0 5px 32px rgba(173, 42, 36, 0.10);
@@ -267,58 +302,70 @@
             font-size: 0.8em;
             border: none;
             padding: 10px;
-            width: 100%; /* Ensure full width */
+            width: 100%;
         }
-        .flatpickr-calendar.open {
+        
+        #CalculatorContainer .flatpickr-calendar.open {
             position: absolute;
             z-index: 99999;
             top: calc(50% + 5px) !important;
             left: 50 !important;
         }
-        #infoLink{
-            background-color:#f36e3e;
+        
+        #CalculatorContainer #infoLink {
+            background-color: #f36e3e;
         }
-        #ClrBtn{
+        
+        #CalculatorContainer #ClrBtn {
             background-color: #dfcda7;
             color: #885b23;
         }
-        #ClrBtn:hover{
+        
+        #CalculatorContainer #ClrBtn:hover {
             background-color: #e8e0c5;
             color: #885b23;
         }
+        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .result-section h2 {
+        
+        #CalculatorContainer .result-section h2 {
             color: var(--heading);
             margin-bottom: 20px;
             text-align: center;
             font-size: 1.5rem;
         }
-        .zodiac-info {
+        
+        #CalculatorContainer .zodiac-info {
             margin-top: 15px;
         }
-        .info-row {
+        
+        #CalculatorContainer .info-row {
             display: flex;
             margin-bottom: 15px;
             padding-bottom: 15px;
             border-bottom: 1px solid var(--border);
         }
-        .info-row:last-child {
+        
+        #CalculatorContainer .info-row:last-child {
             border-bottom: none;
             margin-bottom: 0;
             padding-bottom: 0;
         }
-        .info-label {
+        
+        #CalculatorContainer .info-label {
             font-weight: 600;
             width: 150px;
             color: var(--heading);
         }
-        .info-value {
+        
+        #CalculatorContainer .info-value {
             flex: 1;
         }
-        .zodiac-link {
+        
+        #CalculatorContainer .zodiac-link {
             display: inline-block;
             margin-top: 20px;
             color: var(--primary);
@@ -326,106 +373,124 @@
             font-weight: 600;
             transition: color 0.3s;
         }
-        .zodiac-link:hover {
+        
+        #CalculatorContainer .zodiac-link:hover {
             text-decoration: underline;
         }
         
-        .button-group {
+        #CalculatorContainer .button-group {
             display: flex;
             gap: 10px;
             margin-top: 20px;
         }
-        .button-group .btn {
+        
+        #CalculatorContainer .button-group .btn {
             flex: 1;
         }
+        
+        /* Mobile responsiveness */
         @media (max-width: 480px) {
-            .content {
+            #CalculatorContainer .content {
                 padding: 15px;
             }
-            .info-row {
+            
+            #CalculatorContainer .info-row {
                 flex-direction: column;
             }
-            .info-label {
+            
+            #CalculatorContainer .info-label {
                 width: 100%;
                 margin-bottom: 5px;
             }
-            .button-group {
+            
+            #CalculatorContainer .button-group {
                 flex-direction: column;
             }
-            .manual-date-container {
+            
+            #CalculatorContainer .manual-date-container {
                 flex-direction: column;
+            }
+            
+            #CalculatorContainer .date-input-container {
+                flex-direction: column;
+            }
+            
+            #CalculatorContainer .calendar-btn {
+                padding: 12px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h2>Zodiac Sign Finder</h2>
-        </header>
-        <div class="content">
-            <div class="input-section">
-                <!-- Date picker with input and button -->
-                <div class="input-group">
-                    <label for="birthday-input">Pick your birthday using calendar</label>
-                    <div class="date-input-container">
-                        <input type="text" id="birthday-input" class="date-input" placeholder="Select date" readonly>
-                        <button type="button" id="calendarBtn" class="calendar-btn">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                <line x1="16" y1="2" x2="16" y2="6"></line>
-                                <line x1="8" y1="2" x2="8" y2="6"></line>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                            </svg>
-                        </button>
+    <div id="CalculatorContainer">
+        <div class="container">
+            <header>
+                <h2>Zodiac Sign Finder</h2>
+            </header>
+            <div class="content">
+                <div class="input-section">
+                    <!-- Date picker with input and button -->
+                    <div class="input-group">
+                        <label for="birthday-input">Pick your birthday using calendar</label>
+                        <div class="date-input-container">
+                            <input type="text" id="birthday-input" class="date-input" placeholder="Select date" readonly>
+                            <button type="button" id="calendarBtn" class="calendar-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <!-- Manual date dropdowns -->
-                <div class="input-group">
-                    <label for="monthDropdown">Or select your birthday manually</label>
-                    <div class="manual-date-container">
-                        <select id="monthDropdown" class="date-dropdown">
-                            <option value="" selected disabled>Month</option>
-                            <option value="1">January</option>
-                            <option value="2">February</option>
-                            <option value="3">March</option>
-                            <option value="4">April</option>
-                            <option value="5">May</option>
-                            <option value="6">June</option>
-                            <option value="7">July</option>
-                            <option value="8">August</option>
-                            <option value="9">September</option>
-                            <option value="10">October</option>
-                            <option value="11">November</option>
-                            <option value="12">December</option>
-                        </select>
-                        <select id="dayDropdown" class="date-dropdown">
-                            <option value="" selected disabled>Day</option>
-                            <!-- Days will be populated by JavaScript -->
-                        </select>
-                        <select id="yearDropdown" class="date-dropdown year">
-                            <option value="" selected disabled>Year</option>
-                            <!-- Years will be populated by JavaScript -->
-                        </select>
+                    <!-- Manual date dropdowns -->
+                    <div class="input-group">
+                        <label for="monthDropdown">Or select your birthday manually</label>
+                        <div class="manual-date-container">
+                            <select id="monthDropdown" class="date-dropdown">
+                                <option value="" selected disabled>Month</option>
+                                <option value="1">January</option>
+                                <option value="2">February</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                            <select id="dayDropdown" class="date-dropdown">
+                                <option value="" selected disabled>Day</option>
+                                <!-- Days will be populated by JavaScript -->
+                            </select>
+                            <select id="yearDropdown" class="date-dropdown year">
+                                <option value="" selected disabled>Year</option>
+                                <!-- Years will be populated by JavaScript -->
+                            </select>
+                        </div>
                     </div>
+                    <!-- Picker submit button -->
+                    <button class="btn" onclick="findZodiac()">Find My Sign</button>
+                    <div id="errorMessage" class="error"></div>
                 </div>
-                <!-- Picker submit button -->
-                <button class="btn" onclick="findZodiac()">Find My Sign</button>
-                <div id="errorMessage" class="error"></div>
-            </div>
-            <!-- Results -->
-            <div class="result-section" id="resultSection">
-                <h2>Your Zodiac Sign: <span id="zodiacName"></span></h2>
-                <div class="zodiac-info">
-                    <div class="info-row"><div class="info-label">Element</div><div class="info-value" id="element"></div></div>
-                    <div class="info-row"><div class="info-label">Dates</div><div class="info-value" id="dates"></div></div>
-                    <div class="info-row"><div class="info-label">Compatibility</div><div class="info-value" id="compatibility"></div></div>
-                    <div class="info-row"><div class="info-label">Personality Traits</div><div class="info-value" id="traits"></div></div>
-                    <div class="info-row"><div class="info-label">Symbol</div><div class="info-value" id="symbol"></div></div>
-                </div>
-                <div class="button-group">
-                    <a href="#" id="infoLink" class="btn" target="_blank">Learn More</a>
-                    <button id="ClrBtn" class="btn btn-secondary" onclick="clearResults()">Clear Results</button>
+                <!-- Results -->
+                <div class="result-section" id="resultSection">
+                    <h2>Your Zodiac Sign: <span id="zodiacName"></span></h2>
+                    <div class="zodiac-info">
+                        <div class="info-row"><div class="info-label">Element</div><div class="info-value" id="element"></div></div>
+                        <div class="info-row"><div class="info-label">Dates</div><div class="info-value" id="dates"></div></div>
+                        <div class="info-row"><div class="info-label">Compatibility</div><div class="info-value" id="compatibility"></div></div>
+                        <div class="info-row"><div class="info-label">Personality Traits</div><div class="info-value" id="traits"></div></div>
+                        <div class="info-row"><div class="info-label">Symbol</div><div class="info-value" id="symbol"></div></div>
+                    </div>
+                    <div class="button-group">
+                        <a href="#" id="infoLink" class="btn" target="_blank">Learn More</a>
+                        <button id="ClrBtn" class="btn btn-secondary" onclick="clearResults()">Clear Results</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -580,12 +645,15 @@
             aquarius: {dates: "January 20 – February 19",element: "Air",compatibility: "Most compatible with Sagittarius and Aquarius",traits: "Independent, Intelligent, Friendly, Compassionate, Outgoing",symbol: "Water Bearer ♒",link: "https://www.almanac.com/aquarius-zodiac-sign"},
             pisces: {dates: "February 20 – March 20",element: "Water",compatibility: "Most compatible with Leo and Sagittarius",traits: "Passionate, Competitive, Bold, Independent, Impulsive",symbol: "Fish ♓",link: "https://www.almanac.com/pisces-zodiac-sign"}
         };
+        
         function showError(message) {
             document.getElementById('errorMessage').textContent = message;
         }
+        
         function clearError() {
             document.getElementById('errorMessage').textContent = '';
         }
+        
         function clearResults() {
             document.getElementById('resultSection').style.display = 'none';
             document.getElementById('birthday-input').value = '';
@@ -647,6 +715,7 @@
             if ((month === 2 && day >= 20) || (month === 3 && day <= 20)) return 'pisces';
             return null;
         }
+        
         function displayZodiacInfo(sign) {
             if (!sign) {
                 showError('Could not determine zodiac sign. Please check your birth date.');
