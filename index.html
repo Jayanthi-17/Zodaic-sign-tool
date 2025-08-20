@@ -148,7 +148,7 @@
         }
 
         #CalculatorContainer .flatpickr-months .flatpickr-month {
-            color: #ad2a24;  
+            color:var(--primary);  
             font-weight: bold;
             font-size: 1em;
             height: 40px;
@@ -157,10 +157,12 @@
         #CalculatorContainer .flatpickr-weekdays,
         #CalculatorContainer .flatpickr-days {
             font-size: 1.06em;
+            color: #ad2a24; 
         }
         
         #CalculatorContainer .flatpickr-day {
             border-radius: 8px;
+            color: #ad2a24;
             height: 36px;
             line-height: 36px;
             margin: 2px;
@@ -169,7 +171,7 @@
         #CalculatorContainer .flatpickr-day.selected,
         #CalculatorContainer .flatpickr-day.today {
             background-color: var(--primary) !important;
-            color: #fff !important;
+            color: #ad2a24 !important;
             border-color: var(--primary) !important;
         }
         
@@ -189,7 +191,7 @@
         }
         
         #CalculatorContainer .flatpickr-day:hover {
-            background: var(--primary-hover);
+            background: var(--primary);
             color: #fff;
         }
         
@@ -251,7 +253,7 @@
         }
         
         #CalculatorContainer .date-dropdown:focus {
-            border-color: var(--primary-hover);
+            border-color:var(--border);
         }
         
         #CalculatorContainer .date-dropdown.year {
@@ -293,18 +295,6 @@
             border: 1px solid var(--border);
             animation: fadeIn 0.3s ease-out;
         }
-        
-        #CalculatorContainer .flatpickr-calendar {
-            background: #fff;
-            border-radius: 7px;
-            box-shadow: 0 5px 32px rgba(173, 42, 36, 0.10);
-            font-family: inherit;
-            font-size: 0.8em;
-            border: none;
-            padding: 10px;
-            width: 100%;
-        }
-        
         #CalculatorContainer .flatpickr-calendar.open {
             position: absolute;
             z-index: 99999;
@@ -419,6 +409,17 @@
                 padding: 12px;
             }
         }
+        
+        /* Calendar overlay */
+        .calendar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 99998;
+        }
     </style>
 </head>
 <body>
@@ -528,91 +529,129 @@
         document.addEventListener('DOMContentLoaded', function() {
             populateDays();
             populateYears();
+            
+            // Initialize the calendar after DOM is loaded
+            initCalendar();
         });
 
         function confirmDatePlugin(pluginConfig) {
             return function(fp) {
-                let confirmContainer;
                 return {
                     onReady: function() {
-                        confirmContainer = fp._createElement("div", "flatpickr-confirm-container");
-                        confirmContainer.style.textAlign = "right";
-                        const cancelBtn = fp._createElement("button", "flatpickr-button flatpickr-cancel");
-                        cancelBtn.textContent = pluginConfig.cancelText || "Cancel";
-                        cancelBtn.type = "button";
-                        cancelBtn.onclick = function() { 
+                        // Create confirm container
+                        const confirmContainer = document.createElement('div');
+                        confirmContainer.className = 'flatpickr-confirm-container';
+                        confirmContainer.style.textAlign = 'right';
+                        confirmContainer.style.padding = '10px';
+                        confirmContainer.style.borderTop = '1px solid #e0d9cc';
+                        confirmContainer.style.marginTop = '5px';
+                        
+                        // Create cancel button
+                        const cancelBtn = document.createElement('button');
+                        cancelBtn.className = 'flatpickr-button flatpickr-cancel';
+                        cancelBtn.textContent = pluginConfig.cancelText || 'Cancel';
+                        cancelBtn.type = 'button';
+                        cancelBtn.style.background = '#fff';
+                        cancelBtn.style.color = '#333';
+                        cancelBtn.style.borderRadius = '6px';
+                        cancelBtn.style.padding = '7px 18px';
+                        cancelBtn.style.fontWeight = '600';
+                        cancelBtn.style.border = '1px solid #e0d9cc';
+                        cancelBtn.style.boxShadow = '0 2px 2px rgba(0,0,0,0.09)';
+                        cancelBtn.style.marginRight = '10px';
+                        cancelBtn.onclick = function() {
                             fp.clear();
                             fp.close();
+                            // Remove overlay when calendar closes
+                            const overlay = document.querySelector('.calendar-overlay');
+                            if (overlay) {
+                                overlay.remove();
+                            }
                         };
-                        const confirmBtn = fp._createElement("button", "flatpickr-button flatpickr-confirm");
-                        confirmBtn.textContent = pluginConfig.confirmText || "Select";
-                        confirmBtn.type = "button";
-                        confirmBtn.onclick = function() { 
+                        
+                        // Create confirm button
+                        const confirmBtn = document.createElement('button');
+                        confirmBtn.className = 'flatpickr-button flatpickr-confirm';
+                        confirmBtn.textContent = pluginConfig.confirmText || 'Select';
+                        confirmBtn.type = 'button';
+                        confirmBtn.style.background = '#ad2a24';
+                        confirmBtn.style.color = '#fff';
+                        confirmBtn.style.borderRadius = '6px';
+                        confirmBtn.style.padding = '7px 18px';
+                        confirmBtn.style.fontWeight = '600';
+                        confirmBtn.style.border = 'none';
+                        confirmBtn.onclick = function() {
                             fp.close();
+                            // Remove overlay when calendar closes
+                            const overlay = document.querySelector('.calendar-overlay');
+                            if (overlay) {
+                                overlay.remove();
+                            }
                         };
+                        
+                        // Add buttons to container
                         confirmContainer.appendChild(cancelBtn);
                         confirmContainer.appendChild(confirmBtn);
+                        
+                        // Add container to calendar
                         fp.calendarContainer.appendChild(confirmContainer);
                     }
                 };
             };
         }
 
-        // Initialize Flatpickr with corrected settings
-        const dateInput = document.getElementById('birthday-input');
-        const calendar = flatpickr(dateInput, {
-            altInput: true,
-            altFormat: "F j, Y",
-            dateFormat: "Y-m-d",
-            allowInput: false,
-            clickOpens: true,
-            static: false,
-            position: "auto",
-            monthSelectorType: "static",
-            plugins: [confirmDatePlugin({
-                confirmText: "Select",
-                cancelText: "Cancel"
-            })],
-            onOpen: function(selectedDates, dateStr, instance) {
-                // Add overlay when calendar opens
-                const overlay = document.createElement('div');
-                overlay.className = 'calendar-overlay';
-                overlay.style.position = 'fixed';
-                overlay.style.top = '0';
-                overlay.style.left = '0';
-                overlay.style.right = '0';
-                overlay.style.bottom = '0';
-                overlay.style.background = 'rgba(0,0,0,0.5)';
-                overlay.style.zIndex = '99999';
-                overlay.onclick = function() {
-                    calendar.close();
-                };
-                document.body.appendChild(overlay);
-            },
-            onClose: function() {
-                // Remove overlay when calendar closes
-                const overlay = document.querySelector('.calendar-overlay');
-                if (overlay) {
-                    overlay.remove();
-                }
-            },
-            onChange: function(selectedDates, dateStr, instance) {
-                if (selectedDates.length > 0) {
-                    const formattedDate = instance.formatDate(selectedDates[0], "F j, Y");
-                    dateInput.value = formattedDate;
-                    
-                    // Also update the dropdowns to match
-                    const date = selectedDates[0];
-                    document.getElementById('monthDropdown').value = date.getMonth() + 1;
-                    document.getElementById('dayDropdown').value = date.getDate();
-                    document.getElementById('yearDropdown').value = date.getFullYear();
-                }
-            }
-        });
+        let calendar; // Declare calendar variable outside to make it accessible
 
-        document.getElementById('calendarBtn').addEventListener('click', function() {
-            calendar.open();
-        });
+        function initCalendar() {
+            // Initialize Flatpickr with corrected settings
+            const dateInput = document.getElementById('birthday-input');
+            calendar = flatpickr(dateInput, {
+                altInput: true,
+                altFormat: "F j, Y",
+                dateFormat: "Y-m-d",
+                allowInput: false,
+                clickOpens: true,
+                static: false,
+                position: "auto",
+                monthSelectorType: "static",
+                plugins: [confirmDatePlugin({
+                    confirmText: "Select",
+                    cancelText: "Cancel"
+                })],
+                onOpen: function(selectedDates, dateStr, instance) {
+                    // Add overlay when calendar opens
+                    const overlay = document.createElement('div');
+                    overlay.className = 'calendar-overlay';
+                    overlay.onclick = function() {
+                        calendar.close();
+                        overlay.remove();
+                    };
+                    document.body.appendChild(overlay);
+                },
+                onClose: function(selectedDates, dateStr, instance) {
+                    // Remove overlay when calendar closes
+                    const overlay = document.querySelector('.calendar-overlay');
+                    if (overlay) {
+                        overlay.remove();
+                    }
+                    
+                    if (selectedDates.length > 0) {
+                        const formattedDate = instance.formatDate(selectedDates[0], "F j, Y");
+                        dateInput.value = formattedDate;
+                        
+                        // Also update the dropdowns to match
+                        const date = selectedDates[0];
+                        document.getElementById('monthDropdown').value = date.getMonth() + 1;
+                        document.getElementById('dayDropdown').value = date.getDate();
+                        document.getElementById('yearDropdown').value = date.getFullYear();
+                    }
+                }
+            });
+
+            document.getElementById('calendarBtn').addEventListener('click', function() {
+                calendar.open();
+            });
+        }
 
         // Update calendar when dropdowns change
         document.getElementById('monthDropdown').addEventListener('change', updateCalendarFromDropdowns);
