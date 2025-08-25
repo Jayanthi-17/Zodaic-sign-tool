@@ -411,37 +411,89 @@
         
         /* Mobile responsiveness */
         @media (max-width: 480px) {
-            #CalculatorContainer .content {
-                padding: 15px;
-            }
-            
-            #CalculatorContainer .info-row {
-                flex-direction: column;
-            }
-            
-            #CalculatorContainer .info-label {
-                width: 100%;
-                margin-bottom: 5px;
-            }
-            
-            #CalculatorContainer .button-group {
-                flex-direction: column;
-            }
-            
-            #CalculatorContainer .date-selection-row {
-                flex-direction: column;
-            }
-            
-            #CalculatorContainer .calendar-btn-small {
-                width: 100%;
-                padding: 12px;
-            }
-            
-            #CalculatorContainer .custom-calendar {
-                width: 90%;
-                max-width: 300px;
-            }
-        }
+    /* Container max width smaller */
+    #CalculatorContainer .container {
+        max-width: 100%;
+        margin: 10px;
+        border-radius: 6px;
+        box-shadow: none;
+    }
+
+    /* Content padding adjusted */
+    #CalculatorContainer .content {
+        padding: 15px 10px;
+    }
+
+    /* Stack date selection inputs vertically with full width */
+    #CalculatorContainer .date-selection-row {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    #CalculatorContainer .date-dropdown {
+        flex: none;
+        width: 100%;
+        font-size: 1.1rem;
+        padding: 14px;
+    }
+
+    #CalculatorContainer .calendar-btn-small {
+        width: 100%;
+        padding: 14px 0;
+        font-size: 1.2rem;
+        border-radius: 8px;
+    }
+
+    /* Buttons full width */
+    #CalculatorContainer .btn {
+        font-size: 1.1rem;
+        padding: 14px 0;
+        border-radius: 8px;
+    }
+
+    /* Increased tap targets for calendar controls */
+    #CalculatorContainer .calendar-header button {
+        font-size: 1.5rem;
+        padding: 10px 15px;
+        border-radius: 8px;
+    }
+
+    /* Calendar container adapts to smaller screens */
+    #CalculatorContainer .custom-calendar {
+        width: 95%;
+        max-width: 320px;
+        padding: 20px;
+        border-radius: 12px;
+    }
+
+    /* Info rows stack nicely */
+    #CalculatorContainer .info-row {
+        flex-direction: column;
+        padding-bottom: 12px;
+    }
+
+    #CalculatorContainer .info-label {
+        width: 100%;
+        margin-bottom: 6px;
+        font-size: 1rem;
+    }
+
+    #CalculatorContainer .info-value {
+        font-size: 1rem;
+    }
+
+    /* Scroll horizontally on small screens if needed for info section */
+    #CalculatorContainer .zodiac-info {
+        overflow-x: auto;
+    }
+
+    /* Slightly reduce the spacing between elements */
+    #CalculatorContainer .input-group,
+    #CalculatorContainer .input-section {
+        margin-bottom: 18px;
+    }
+}
+
     </style>
 </head>
 <body>
