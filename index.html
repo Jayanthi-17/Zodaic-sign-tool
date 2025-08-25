@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zodiac Sign Finder</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
         /* Global styles only for the body */
-        body {
+        #CalculatorContainer body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #fff;
             color: #333333;
@@ -119,115 +118,6 @@
             background-color: var(--primary-hover);
         }
         
-        #CalculatorContainer .flatpickr-calendar {
-            background: #fff;
-            border-radius: 15px;
-            box-shadow: 0 5px 32px rgba(173, 42, 36, 0.10);
-            font-family: inherit;
-            font-size: 1.07em;
-            border: none;
-            padding: 10px;
-            position: fixed !important;
-            top: 50% !important;
-            left: 50% !important;
-            transform: translate(-50%, -50%) !important;
-            z-index: 100000 !important;
-            width: auto !important;
-        }
-        
-        #CalculatorContainer .flatpickr-calendar:before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 99999;
-            pointer-events: none;
-        }
-
-        #CalculatorContainer .flatpickr-months .flatpickr-month {
-            color:var(--primary);  
-            font-weight: bold;
-            font-size: 1em;
-            height: 40px;
-        }
-        
-
-        #CalculatorContainer .flatpickr-weekdays,
-        #CalculatorContainer .flatpickr-days {
-            font-size: 1.06em;
-            background-color:var(--primary); 
-            color: var(--primary);
-        }
-        
-        #CalculatorContainer .flatpickr-day {
-            border-radius: 8px;
-            color: #ad2a24;
-            height: 36px;
-            line-height: 36px;
-            margin: 2px;
-        }
-        
-        #CalculatorContainer .flatpickr-day.selected,
-        #CalculatorContainer .flatpickr-day.today {
-            background-color: var(--primary) !important;
-            color: #ad2a24 !important;
-            border-color: var(--primary) !important;
-        }
-        
-        #CalculatorContainer .flatpickr-weekday {
-            color: #ad2a24;
-            font-weight: 600;
-        }
-
-        #CalculatorContainer .flatpickr-current-month input.cur-year {
-            color: #ad2a24;
-            font-weight: 600;
-        }
-        
-        #CalculatorContainer .flatpickr-monthDropdown-months,
-        #CalculatorContainer .flatpickr-current-month .numInputWrapper {
-            color: var(--text);
-        }
-        
-        #CalculatorContainer .flatpickr-day:hover {
-            background: var(--primary);
-            color: #fff;
-        }
-        
-        #CalculatorContainer .flatpickr-button.flatpickr-confirm {
-            background: var(--primary) !important;
-            color: #fff !important;
-            border-radius: 6px;
-            margin-left: 6px;
-            padding: 7px 18px;
-            font-weight: 600;
-            border: none;
-        }
-        
-        #CalculatorContainer .flatpickr-button.flatpickr-cancel {
-            background: #fff !important;
-            color: var(--text) !important;
-            border-radius: 6px;
-            padding: 7px 18px;
-            font-weight: 600;
-            border: 1px solid var(--border);
-            box-shadow: 0 2px 2px rgba(0,0,0,0.09);
-        }
-        
-        #CalculatorContainer .flatpickr-confirm-container {
-            padding: 10px;
-            border-top: 1px solid var(--border);
-            margin-top: 5px;
-        }
-        
-        #CalculatorContainer .flatpickr-weekday {
-            color: #ad2a24 !important;
-            font-weight: 600;
-        }
-
         /* Combined date selection section */
         #CalculatorContainer .combined-date-container {
             display: flex;
@@ -326,12 +216,6 @@
             border: 1px solid var(--border);
             animation: fadeIn 0.3s ease-out;
         }
-        #CalculatorContainer .flatpickr-calendar.open {
-            position: absolute;
-            z-index: 99999;
-            top: calc(50% + 5px) !important;
-            left: 50 !important;
-        }
         
         #CalculatorContainer #infoLink {
             background-color: #228B22;
@@ -409,6 +293,121 @@
             flex: 1;
         }
         
+        /* Custom Calendar Styles */
+        .calendar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 99998;
+            display: none;
+        }
+        
+        .custom-calendar {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 32px rgba(173, 42, 36, 0.1);
+            z-index: 99999;
+            width: 300px;
+            padding: 15px;
+            display: none;
+        }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .calendar-header button {
+            background:none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--primary);
+        }
+        
+        .calendar-header h3 {
+            margin: 0;
+            color: #ad2a24;
+        }
+        
+        .calendar-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #ad2a24;
+        }
+        
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+        
+        .calendar-days button {
+            border: none;
+            background: none;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        .calendar-days button:hover {
+            background: #ad2a24;
+        }
+        
+        .calendar-days button.selected {
+            background:#ad2a24;
+            color: white;
+        }
+        
+        .calendar-days button.today {
+            border: 1px solid var(--primary);
+        }
+        
+        .calendar-days button.other-month {
+            color: #ccc;
+        }
+        
+        .calendar-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .calendar-actions button {
+            padding: 7px 18px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            
+        }
+        
+        .calendar-cancel {
+            background: rgb(212, 200, 200);
+            border: 1px solid #c6b1b1;
+            color: var(--text);
+        }
+        
+        .calendar-confirm {
+             background-color: #ad2a24;
+            border: none;
+            color: white;
+        }
+        
         /* Mobile responsiveness */
         @media (max-width: 480px) {
             #CalculatorContainer .content {
@@ -436,17 +435,11 @@
                 width: 100%;
                 padding: 12px;
             }
-        }
-        
-        /* Calendar overlay */
-        .calendar-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 99998;
+            
+            .custom-calendar {
+                width: 90%;
+                max-width: 300px;
+            }
         }
     </style>
 </head>
@@ -495,7 +488,7 @@
                                     </svg>
                                 </button>
                             </div>
-                            <input type="text" id="birthday-input" class="date-input" placeholder="Selected date will appear here" readonly style="display: none;">
+                            <input type="text" id="birthday-input" class="date-input" placeholder="Selected date will appear here" readonly>
                         </div>
                     </div>
                     <!-- Picker submit button -->
@@ -521,7 +514,30 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <!-- Calendar Overlay and Custom Calendar -->
+    <div class="calendar-overlay" id="calendarOverlay"></div>
+    <div class="custom-calendar" id="customCalendar">
+        <div class="calendar-header">
+            <button id="prevMonth">&lt;</button>
+            <h3 id="calendarMonthYear"></h3>
+            <button id="nextMonth">&gt;</button>
+        </div>
+        <div class="calendar-weekdays">
+            <div>Sun</div>
+            <div>Mon</div>
+            <div>Tue</div>
+            <div>Wed</div>
+            <div>Thu</div>
+            <div>Fri</div>
+            <div>Sat</div>
+        </div>
+        <div class="calendar-days" id="calendarDays"></div>
+        <div class="calendar-actions">
+            <button class="calendar-cancel" id="calendarCancel">Cancel</button>
+            <button class="calendar-confirm" id="calendarConfirm">Select</button>
+        </div>
+    </div>
+
     <script>
         // Populate day and year dropdowns
         function populateDays() {
@@ -554,147 +570,193 @@
             populateDays();
             populateYears();
             
-            // Initialize the calendar after DOM is loaded
+            // Initialize the calendar functionality
             initCalendar();
         });
 
-        function confirmDatePlugin(pluginConfig) {
-            return function(fp) {
-                return {
-                    onReady: function() {
-                        // Create confirm container
-                        const confirmContainer = document.createElement('div');
-                        confirmContainer.className = 'flatpickr-confirm-container';
-                        confirmContainer.style.textAlign = 'right';
-                        confirmContainer.style.padding = '10px';
-                        confirmContainer.style.borderTop = '1px solid #e0d9cc';
-                        confirmContainer.style.marginTop = '5px';
-                        
-                        // Create cancel button
-                        const cancelBtn = document.createElement('button');
-                        cancelBtn.className = 'flatpickr-button flatpickr-cancel';
-                        cancelBtn.textContent = pluginConfig.cancelText || 'Cancel';
-                        cancelBtn.type = 'button';
-                        cancelBtn.style.background = '#fff';
-                        cancelBtn.style.color = '#333';
-                        cancelBtn.style.borderRadius = '6px';
-                        cancelBtn.style.padding = '7px 18px';
-                        cancelBtn.style.fontWeight = '600';
-                        cancelBtn.style.border = '1px solid #e0d9cc';
-                        cancelBtn.style.boxShadow = '0 2px 2px rgba(0,0,0,0.09)';
-                        cancelBtn.style.marginRight = '10px';
-                        cancelBtn.onclick = function() {
-                            fp.clear();
-                            fp.close();
-                            // Remove overlay when calendar closes
-                            const overlay = document.querySelector('.calendar-overlay');
-                            if (overlay) {
-                                overlay.remove();
-                            }
-                        };
-                        
-                        // Create confirm button
-                        const confirmBtn = document.createElement('button');
-                        confirmBtn.className = 'flatpickr-button flatpickr-confirm';
-                        confirmBtn.textContent = pluginConfig.confirmText || 'Select';
-                        confirmBtn.type = 'button';
-                        confirmBtn.style.background = '#ad2a24';
-                        confirmBtn.style.color = '#fff';
-                        confirmBtn.style.borderRadius = '6px';
-                        confirmBtn.style.padding = '7px 18px';
-                        confirmBtn.style.fontWeight = '600';
-                        confirmBtn.style.border = 'none';
-                        confirmBtn.onclick = function() {
-                            fp.close();
-                            // Remove overlay when calendar closes
-                            const overlay = document.querySelector('.calendar-overlay');
-                            if (overlay) {
-                                overlay.remove();
-                            }
-                        };
-                        
-                        // Add buttons to container
-                        confirmContainer.appendChild(cancelBtn);
-                        confirmContainer.appendChild(confirmBtn);
-                        
-                        // Add container to calendar
-                        fp.calendarContainer.appendChild(confirmContainer);
-                    }
-                };
-            };
-        }
-
-        let calendar; // Declare calendar variable outside to make it accessible
+        // Custom Calendar Implementation
+        let selectedDate = null;
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
 
         function initCalendar() {
-            // Initialize Flatpickr with corrected settings
-            const dateInput = document.getElementById('birthday-input');
-            calendar = flatpickr(dateInput, {
-                altInput: true,
-                altFormat: "F j, Y",
-                dateFormat: "Y-m-d",
-                allowInput: false,
-                clickOpens: true,
-                static: false,
-                position: "auto",
-                monthSelectorType: "static",
-                plugins: [confirmDatePlugin({
-                    confirmText: "Select",
-                    cancelText: "Cancel"
-                })],
-                onOpen: function(selectedDates, dateStr, instance) {
-                    // Add overlay when calendar opens
-                    const overlay = document.createElement('div');
-                    overlay.className = 'calendar-overlay';
-                    overlay.onclick = function() {
-                        calendar.close();
-                        overlay.remove();
-                    };
-                    document.body.appendChild(overlay);
-                },
-                onClose: function(selectedDates, dateStr, instance) {
-                    // Remove overlay when calendar closes
-                    const overlay = document.querySelector('.calendar-overlay');
-                    if (overlay) {
-                        overlay.remove();
-                    }
+            // Set up calendar button event listener
+            document.getElementById('calendarBtn').addEventListener('click', function() {
+                openCalendar();
+            });
+            
+            // Set up calendar navigation
+            document.getElementById('prevMonth').addEventListener('click', function() {
+                currentMonth--;
+                if (currentMonth < 0) {
+                    currentMonth = 11;
+                    currentYear--;
+                }
+                renderCalendar();
+            });
+            
+            document.getElementById('nextMonth').addEventListener('click', function() {
+                currentMonth++;
+                if (currentMonth > 11) {
+                    currentMonth = 0;
+                    currentYear++;
+                }
+                renderCalendar();
+            });
+            
+            // Set up calendar actions
+            document.getElementById('calendarCancel').addEventListener('click', function() {
+                closeCalendar();
+            });
+            
+            document.getElementById('calendarConfirm').addEventListener('click', function() {
+                if (selectedDate) {
+                    updateDateFromCalendar(selectedDate);
+                }
+                closeCalendar();
+            });
+            
+            // Close calendar when clicking outside
+            document.getElementById('calendarOverlay').addEventListener('click', function() {
+                closeCalendar();
+            });
+        }
+
+        function openCalendar() {
+            // Initialize with current date or selected date
+            const birthdayInput = document.getElementById('birthday-input').value;
+            if (birthdayInput) {
+                const dateParts = birthdayInput.split(' ');
+                if (dateParts.length === 3) {
+                    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                    const month = monthNames.indexOf(dateParts[0]);
+                    const day = parseInt(dateParts[1].replace(',', ''));
+                    const year = parseInt(dateParts[2]);
                     
-                    if (selectedDates.length > 0) {
-                        const formattedDate = instance.formatDate(selectedDates[0], "F j, Y");
-                        dateInput.value = formattedDate;
-                        
-                        // Also update the dropdowns to match
-                        const date = selectedDates[0];
-                        document.getElementById('monthDropdown').value = date.getMonth() + 1;
-                        document.getElementById('dayDropdown').value = date.getDate();
-                        document.getElementById('yearDropdown').value = date.getFullYear();
+                    if (!isNaN(month) && !isNaN(day) && !isNaN(year)) {
+                        selectedDate = new Date(year, month, day);
+                        currentMonth = month;
+                        currentYear = year;
                     }
                 }
-            });
+            } else {
+                // Default to current date if no date is selected
+                const today = new Date();
+                selectedDate = today;
+                currentMonth = today.getMonth();
+                currentYear = today.getFullYear();
+            }
+            
+            // Show calendar and overlay
+            document.getElementById('customCalendar').style.display = 'block';
+            document.getElementById('calendarOverlay').style.display = 'block';
+            
+            // Render the calendar
+            renderCalendar();
+        }
 
-            document.getElementById('calendarBtn').addEventListener('click', function() {
-                calendar.open();
-            });
+        function closeCalendar() {
+            document.getElementById('customCalendar').style.display = 'none';
+            document.getElementById('calendarOverlay').style.display = 'none';
+        }
+
+        function renderCalendar() {
+            const calendarDays = document.getElementById('calendarDays');
+            calendarDays.innerHTML = '';
+            
+            const monthYearElement = document.getElementById('calendarMonthYear');
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            monthYearElement.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+            
+            // Get first day of month and number of days in month
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            
+            // Get today's date for highlighting
+            const today = new Date();
+            const isToday = (day) => {
+                return currentYear === today.getFullYear() && 
+                       currentMonth === today.getMonth() && 
+                       day === today.getDate();
+            };
+            
+            // Check if a day is selected
+            const isSelected = (day) => {
+                return selectedDate && 
+                       currentYear === selectedDate.getFullYear() && 
+                       currentMonth === selectedDate.getMonth() && 
+                       day === selectedDate.getDate();
+            };
+            
+            // Add empty cells for days before the first day of the month
+            for (let i = 0; i < firstDay; i++) {
+                const emptyCell = document.createElement('button');
+                emptyCell.classList.add('other-month');
+                emptyCell.disabled = true;
+                calendarDays.appendChild(emptyCell);
+            }
+            
+            // Add cells for each day of the month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayCell = document.createElement('button');
+                dayCell.textContent = day;
+                
+                if (isToday(day)) {
+                    dayCell.classList.add('today');
+                }
+                
+                if (isSelected(day)) {
+                    dayCell.classList.add('selected');
+                }
+                
+                dayCell.addEventListener('click', function() {
+                    // Remove selected class from all days
+                    const allDays = calendarDays.querySelectorAll('button');
+                    allDays.forEach(dayBtn => dayBtn.classList.remove('selected'));
+                    
+                    // Add selected class to clicked day
+                    dayCell.classList.add('selected');
+                    
+                    // Update selected date
+                    selectedDate = new Date(currentYear, currentMonth, day);
+                });
+                
+                calendarDays.appendChild(dayCell);
+            }
+        }
+
+        function updateDateFromCalendar(date) {
+            // Format the date as "Month Day, Year"
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            const formattedDate = `${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+            
+            // Update the input field
+            document.getElementById('birthday-input').value = formattedDate;
+            
+            // Update the dropdowns
+            document.getElementById('monthDropdown').value = date.getMonth() + 1;
+            document.getElementById('dayDropdown').value = date.getDate();
+            document.getElementById('yearDropdown').value = date.getFullYear();
         }
 
         // Update calendar when dropdowns change
-        document.getElementById('monthDropdown').addEventListener('change', updateCalendarFromDropdowns);
-        document.getElementById('dayDropdown').addEventListener('change', updateCalendarFromDropdowns);
-        document.getElementById('yearDropdown').addEventListener('change', updateCalendarFromDropdowns);
+        document.getElementById('monthDropdown').addEventListener('change', updateDateFromDropdowns);
+        document.getElementById('dayDropdown').addEventListener('change', updateDateFromDropdowns);
+        document.getElementById('yearDropdown').addEventListener('change', updateDateFromDropdowns);
         
-        function updateCalendarFromDropdowns() {
+        function updateDateFromDropdowns() {
             const month = document.getElementById('monthDropdown').value;
             const day = document.getElementById('dayDropdown').value;
             const year = document.getElementById('yearDropdown').value;
             
             if (month && day && year) {
-                const dateStr = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-                calendar.setDate(dateStr, true);
-                document.getElementById('birthday-input').value = new Date(dateStr).toLocaleDateString('en-US', { 
-                    month: 'long', 
-                    day: 'numeric', 
-                    year: 'numeric' 
-                });
+                const date = new Date(year, month - 1, day);
+                if (!isNaN(date.getTime())) {
+                    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                    document.getElementById('birthday-input').value = `${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+                }
+            } else {
+                document.getElementById('birthday-input').value = '';
             }
         }
 
@@ -732,17 +794,31 @@
             document.getElementById('yearDropdown').value = '';
             
             clearError();
-            calendar.clear();
+            selectedDate = null;
         }
 
         function findZodiac() {
             clearError();
             let month, day, year;
             
-            // Get values from dropdowns
-            month = parseInt(document.getElementById('monthDropdown').value);
-            day = parseInt(document.getElementById('dayDropdown').value);
-            year = parseInt(document.getElementById('yearDropdown').value);
+            // Try to get values from input field first
+            const birthdayInput = document.getElementById('birthday-input').value;
+            if (birthdayInput) {
+                const dateParts = birthdayInput.split(' ');
+                if (dateParts.length === 3) {
+                    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                    month = monthNames.indexOf(dateParts[0]) + 1;
+                    day = parseInt(dateParts[1].replace(',', ''));
+                    year = parseInt(dateParts[2]);
+                }
+            }
+            
+            // If not from input, get from dropdowns
+            if (!month || !day || !year) {
+                month = parseInt(document.getElementById('monthDropdown').value);
+                day = parseInt(document.getElementById('dayDropdown').value);
+                year = parseInt(document.getElementById('yearDropdown').value);
+            }
             
             if (!month || !day || !year) {
                 return showError("Please select a complete date.");
