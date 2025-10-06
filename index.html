@@ -587,332 +587,380 @@
 
         // JavaScript functionality
         // Populate day and year dropdowns
-        function populateDays() {
-            const dayDropdown = document.getElementById('dayDropdown');
-            dayDropdown.innerHTML = '<option value="" selected disabled>Day</option>';
+        // JavaScript functionality
+// Populate day and year dropdowns
+function populateDays() {
+    const dayDropdown = document.getElementById('dayDropdown');
+    dayDropdown.innerHTML = '<option value="" selected disabled>Day</option>';
+    
+    for (let i = 1; i <= 31; i++) {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = i;
+        dayDropdown.appendChild(option);
+    }
+}
+
+function populateYears() {
+    const yearDropdown = document.getElementById('yearDropdown');
+    yearDropdown.innerHTML = '<option value="" selected disabled>Year</option>';
+    
+    const currentYear = new Date().getFullYear();
+    for (let i = currentYear; i >= currentYear - 100; i--) {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = i;
+        yearDropdown.appendChild(option);
+    }
+}
+
+// Initialize dropdowns on page load
+document.addEventListener('DOMContentLoaded', function() {
+    populateDays();
+    populateYears();
+    
+    // Initialize the calendar functionality
+    initCalendar();
+});
+
+// Custom Calendar Implementation
+let selectedDate = null;
+let currentMonth = new Date().getMonth();
+let currentYear = new Date().getFullYear();
+
+function initCalendar() {
+    // Set up calendar button event listener
+    document.getElementById('calendarBtn').addEventListener('click', function() {
+        openCalendar();
+    });
+    
+    // Set up calendar navigation
+    document.getElementById('prevMonth').addEventListener('click', function() {
+        currentMonth--;
+        if (currentMonth < 0) {
+            currentMonth = 11;
+            currentYear--;
+        }
+        renderCalendar();
+    });
+    
+    document.getElementById('nextMonth').addEventListener('click', function() {
+        currentMonth++;
+        if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
+        }
+        renderCalendar();
+    });
+    
+    // Set up calendar actions
+    document.getElementById('calendarCancel').addEventListener('click', function() {
+        closeCalendar();
+    });
+    
+    document.getElementById('calendarConfirm').addEventListener('click', function() {
+        if (selectedDate) {
+            updateDateFromCalendar(selectedDate);
+        }
+        closeCalendar();
+    });
+    
+    // Close calendar when clicking outside
+    document.getElementById('calendarOverlay').addEventListener('click', function() {
+        closeCalendar();
+    });
+}
+
+function openCalendar() {
+    // Initialize with current date or selected date
+    const birthdayInput = document.getElementById('birthday-input').value;
+    if (birthdayInput) {
+        const dateParts = birthdayInput.split(' ');
+        if (dateParts.length === 3) {
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            const month = monthNames.indexOf(dateParts[0]);
+            const day = parseInt(dateParts[1].replace(',', ''));
+            const year = parseInt(dateParts[2]);
             
-            for (let i = 1; i <= 31; i++) {
-                const option = document.createElement('option');
-                option.value = i;
-                option.textContent = i;
-                dayDropdown.appendChild(option);
+            if (!isNaN(month) && !isNaN(day) && !isNaN(year)) {
+                selectedDate = new Date(year, month, day);
+                currentMonth = month;
+                currentYear = year;
             }
         }
+    } else {
+        // Default to current date if no date is selected
+        const today = new Date();
+        selectedDate = today;
+        currentMonth = today.getMonth();
+        currentYear = today.getFullYear();
+    }
+    
+    // Show calendar and overlay
+    document.getElementById('customCalendar').style.display = 'block';
+    document.getElementById('calendarOverlay').style.display = 'block';
+    
+    // Render the calendar
+    renderCalendar();
+}
+
+function closeCalendar() {
+    document.getElementById('customCalendar').style.display = 'none';
+    document.getElementById('calendarOverlay').style.display = 'none';
+}
+
+function renderCalendar() {
+    const calendarDays = document.getElementById('calendarDays');
+    calendarDays.innerHTML = '';
+    
+    const monthYearElement = document.getElementById('calendarMonthYear');
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    monthYearElement.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+    
+    // Get first day of month and number of days in month
+    const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    
+    // Get today's date for highlighting
+    const today = new Date();
+    const isToday = (day) => {
+        return currentYear === today.getFullYear() && 
+               currentMonth === today.getMonth() && 
+               day === today.getDate();
+    };
+    
+    // Check if a day is selected
+    const isSelected = (day) => {
+        return selectedDate && 
+               currentYear === selectedDate.getFullYear() && 
+               currentMonth === selectedDate.getMonth() && 
+               day === selectedDate.getDate();
+    };
+    
+    // Add empty cells for days before the first day of the month
+    for (let i = 0; i < firstDay; i++) {
+        const emptyCell = document.createElement('button');
+        emptyCell.classList.add('other-month');
+        emptyCell.disabled = true;
+        calendarDays.appendChild(emptyCell);
+    }
+    
+    // Add cells for each day of the month
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dayCell = document.createElement('button');
+        dayCell.textContent = day;
         
-        function populateYears() {
-            const yearDropdown = document.getElementById('yearDropdown');
-            yearDropdown.innerHTML = '<option value="" selected disabled>Year</option>';
-            
-            const currentYear = new Date().getFullYear();
-            for (let i = currentYear; i >= currentYear - 100; i--) {
-                const option = document.createElement('option');
-                option.value = i;
-                option.textContent = i;
-                yearDropdown.appendChild(option);
-            }
+        if (isToday(day)) {
+            dayCell.classList.add('today');
         }
         
-        // Initialize dropdowns on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            populateDays();
-            populateYears();
+        if (isSelected(day)) {
+            dayCell.classList.add('selected');
+        }
+        
+        dayCell.addEventListener('click', function() {
+            // Remove selected class from all days
+            const allDays = calendarDays.querySelectorAll('button');
+            allDays.forEach(dayBtn => dayBtn.classList.remove('selected'));
             
-            // Initialize the calendar functionality
-            initCalendar();
+            // Add selected class to clicked day
+            dayCell.classList.add('selected');
+            
+            // Update selected date
+            selectedDate = new Date(currentYear, currentMonth, day);
         });
-
-        // Custom Calendar Implementation
-        let selectedDate = null;
-        let currentMonth = new Date().getMonth();
-        let currentYear = new Date().getFullYear();
-
-        function initCalendar() {
-            // Set up calendar button event listener
-            document.getElementById('calendarBtn').addEventListener('click', function() {
-                openCalendar();
-            });
-            
-            // Set up calendar navigation
-            document.getElementById('prevMonth').addEventListener('click', function() {
-                currentMonth--;
-                if (currentMonth < 0) {
-                    currentMonth = 11;
-                    currentYear--;
-                }
-                renderCalendar();
-            });
-            
-            document.getElementById('nextMonth').addEventListener('click', function() {
-                currentMonth++;
-                if (currentMonth > 11) {
-                    currentMonth = 0;
-                    currentYear++;
-                }
-                renderCalendar();
-            });
-            
-            // Set up calendar actions
-            document.getElementById('calendarCancel').addEventListener('click', function() {
-                closeCalendar();
-            });
-            
-            document.getElementById('calendarConfirm').addEventListener('click', function() {
-                if (selectedDate) {
-                    updateDateFromCalendar(selectedDate);
-                }
-                closeCalendar();
-            });
-            
-            // Close calendar when clicking outside
-            document.getElementById('calendarOverlay').addEventListener('click', function() {
-                closeCalendar();
-            });
-        }
-
-        function openCalendar() {
-            // Initialize with current date or selected date
-            const birthdayInput = document.getElementById('birthday-input').value;
-            if (birthdayInput) {
-                const dateParts = birthdayInput.split(' ');
-                if (dateParts.length === 3) {
-                    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                    const month = monthNames.indexOf(dateParts[0]);
-                    const day = parseInt(dateParts[1].replace(',', ''));
-                    const year = parseInt(dateParts[2]);
-                    
-                    if (!isNaN(month) && !isNaN(day) && !isNaN(year)) {
-                        selectedDate = new Date(year, month, day);
-                        currentMonth = month;
-                        currentYear = year;
-                    }
-                }
-            } else {
-                // Default to current date if no date is selected
-                const today = new Date();
-                selectedDate = today;
-                currentMonth = today.getMonth();
-                currentYear = today.getFullYear();
-            }
-            
-            // Show calendar and overlay
-            document.getElementById('customCalendar').style.display = 'block';
-            document.getElementById('calendarOverlay').style.display = 'block';
-            
-            // Render the calendar
-            renderCalendar();
-        }
-
-        function closeCalendar() {
-            document.getElementById('customCalendar').style.display = 'none';
-            document.getElementById('calendarOverlay').style.display = 'none';
-        }
-
-        function renderCalendar() {
-            const calendarDays = document.getElementById('calendarDays');
-            calendarDays.innerHTML = '';
-            
-            const monthYearElement = document.getElementById('calendarMonthYear');
-            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            monthYearElement.textContent = `${monthNames[currentMonth]} ${currentYear}`;
-            
-            // Get first day of month and number of days in month
-            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-            
-            // Get today's date for highlighting
-            const today = new Date();
-            const isToday = (day) => {
-                return currentYear === today.getFullYear() && 
-                       currentMonth === today.getMonth() && 
-                       day === today.getDate();
-            };
-            
-            // Check if a day is selected
-            const isSelected = (day) => {
-                return selectedDate && 
-                       currentYear === selectedDate.getFullYear() && 
-                       currentMonth === selectedDate.getMonth() && 
-                       day === selectedDate.getDate();
-            };
-            
-            // Add empty cells for days before the first day of the month
-            for (let i = 0; i < firstDay; i++) {
-                const emptyCell = document.createElement('button');
-                emptyCell.classList.add('other-month');
-                emptyCell.disabled = true;
-                calendarDays.appendChild(emptyCell);
-            }
-            
-            // Add cells for each day of the month
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dayCell = document.createElement('button');
-                dayCell.textContent = day;
-                
-                if (isToday(day)) {
-                    dayCell.classList.add('today');
-                }
-                
-                if (isSelected(day)) {
-                    dayCell.classList.add('selected');
-                }
-                
-                dayCell.addEventListener('click', function() {
-                    // Remove selected class from all days
-                    const allDays = calendarDays.querySelectorAll('button');
-                    allDays.forEach(dayBtn => dayBtn.classList.remove('selected'));
-                    
-                    // Add selected class to clicked day
-                    dayCell.classList.add('selected');
-                    
-                    // Update selected date
-                    selectedDate = new Date(currentYear, currentMonth, day);
-                });
-                
-                calendarDays.appendChild(dayCell);
-            }
-        }
-
-        function updateDateFromCalendar(date) {
-            // Format the date as "Month Day, Year"
-            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            const formattedDate = `${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
-            
-            // Update the input field
-            document.getElementById('birthday-input').value = formattedDate;
-            
-            // Update the dropdowns
-            document.getElementById('monthDropdown').value = date.getMonth() + 1;
-            document.getElementById('dayDropdown').value = date.getDate();
-            document.getElementById('yearDropdown').value = date.getFullYear();
-        }
-
-        // Update calendar when dropdowns change
-        document.getElementById('monthDropdown').addEventListener('change', updateDateFromDropdowns);
-        document.getElementById('dayDropdown').addEventListener('change', updateDateFromDropdowns);
-        document.getElementById('yearDropdown').addEventListener('change', updateDateFromDropdowns);
         
-        function updateDateFromDropdowns() {
-            const month = document.getElementById('monthDropdown').value;
-            const day = document.getElementById('dayDropdown').value;
-            const year = document.getElementById('yearDropdown').value;
-            
-            if (month && day && year) {
-                const date = new Date(year, month - 1, day);
-                if (!isNaN(date.getTime())) {
-                    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                    document.getElementById('birthday-input').value = `${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
-                }
-            } else {
-                document.getElementById('birthday-input').value = '';
-            }
-        }
+        calendarDays.appendChild(dayCell);
+    }
+}
 
-        // Zodiac logic
-        const zodiacData = {
-            aries: {dates: "March 21 – April 20",element: "Fire",compatibility: "Most compatible with Leo and Sagittarius",traits: "Passionate, Competitive, Bold, Independent, Impulsive",symbol: "Ram ♈",link: "https://www.almanac.com/content/aries-zodiac-sign"},
-            taurus: {dates: "April 21 – May 20",element: "Earth",compatibility: "Most compatible with Virgo and Capricorn",traits: "Grounded, Sensual, Practical, Loyal, Persistent",symbol: "Bull ♉",link: "https://www.almanac.com/taurus-zodiac-sign"},
-            gemini: {dates: "May 21 – June 20",element: "Air",compatibility: "Aries and Aquarius",traits: "Witty, Social, Engaging, Intelligent, Well-Rounded",symbol: "Twins ♊",link: "https://www.almanac.com/gemini-zodiac-sign"},
-            cancer: {dates: "June 21 – July 22",element: "Water",compatibility: "Most compatible with Taurus and Pisces",traits: "Nurturing, Protective, Emotional, Determined, Intuitive",symbol: "Crab ♋",link: "https://www.almanac.com/cancer-zodiac-sign"},
-            leo: {dates: "July 23 – August 22",element: "Fire",compatibility: "Most compatible with Aries and Sagittarius",traits: "Confident, Generous, Loyal, Creative, Strong Willed",symbol: "Lion ♌",link: "https://www.almanac.com/leo-zodiac-sign"},
-            virgo: {dates: "August 23 – September 22",element: "Earth",compatibility: "Most compatible with Taurus and Pisces",traits: "Nurturing, Grounded, Practical, Calm, Organized",symbol: "Maiden ♍",link: "https://www.almanac.com/virgo-zodiac-sign"},
-            libra: {dates: "September 23 – October 22",element: "Air",compatibility: "Most compatible with Leo and Gemini",traits: "Outgoing, Intelligent, Tactful, Creative, Fair-minded",symbol: "Scales ♎",link: "https://www.almanac.com/libra-zodiac-sign"},
-            scorpio: {dates: "October 23 – November 22",element: "Water",compatibility: "Most compatible with Cancer and Capricorn",traits: "Protective, Loyal, Charismatic, Intuitive, Stubborn ",symbol: "Scorpion ♏",link: "https://www.almanac.com/content/scorpio-zodiac-sign"},
-            sagittarius: {dates: "November 23 – December 21",element: "Fire",compatibility: "Most compatible with Aries and Leo",traits: "Optimistic, Honest, Generous, Fun-loving, Blunt",symbol: "Archer ♐",link: "https://www.almanac.com/content/sagittarius-zodiac-sign"},
-            capricorn: {dates: "December 22 – January 19",element: "Earth",compatibility: "Most compatible with Taurus and Virgo",traits: "Practical, Responsible, Loyal, Patient, Disciplined",symbol: "Goat ♑",link: "https://www.almanac.com/capricorn-zodiac-sign"},
-            aquarius: {dates: "January 20 – February 19",element: "Air",compatibility: "Most compatible with Sagittarius and Aquarius",traits: "Independent, Intelligent, Friendly, Compassionate, Outgoing",symbol: "Water Bearer ♒",link: "https://www.almanac.com/aquarius-zodiac-sign"},
-            pisces: {dates: "February 20 – March 20",element: "Water",compatibility: "Most compatible with Leo and Sagittarius",traits: "Passionate, Competitive, Bold, Independent, Impulsive",symbol: "Fish ♓",link: "https://www.almanac.com/pisces-zodiac-sign"}
-        };
-        
-        function showError(message) {
-            document.getElementById('errorMessage').textContent = message;
-        }
-        
-        function clearError() {
-            document.getElementById('errorMessage').textContent = '';
-        }
-        
-        function clearResults() {
-            document.getElementById('resultSection').style.display = 'none';
-            document.getElementById('birthday-input').value = '';
-            
-            // Clear dropdowns
-            document.getElementById('monthDropdown').value = '';
-            document.getElementById('dayDropdown').value = '';
-            document.getElementById('yearDropdown').value = '';
-            
-            clearError();
-            selectedDate = null;
-        }
+function updateDateFromCalendar(date) {
+    // Format the date as "Month Day, Year"
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const formattedDate = `${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+    
+    // Update the input field
+    document.getElementById('birthday-input').value = formattedDate;
+    
+    // Update the dropdowns
+    document.getElementById('monthDropdown').value = date.getMonth() + 1;
+    document.getElementById('dayDropdown').value = date.getDate();
+    document.getElementById('yearDropdown').value = date.getFullYear();
+    
+    // Clear any previous errors
+    clearError();
+}
 
-        function findZodiac() {
-            clearError();
-            let month, day, year;
-            
-            // Try to get values from input field first
-            const birthdayInput = document.getElementById('birthday-input').value;
-            if (birthdayInput) {
-                const dateParts = birthdayInput.split(' ');
-                if (dateParts.length === 3) {
-                    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                    month = monthNames.indexOf(dateParts[0]) + 1;
-                    day = parseInt(dateParts[1].replace(',', ''));
-                    year = parseInt(dateParts[2]);
-                }
-            }
-            
-            // If not from input, get from dropdowns
-            if (!month || !day || !year) {
-                month = parseInt(document.getElementById('monthDropdown').value);
-                day = parseInt(document.getElementById('dayDropdown').value);
-                year = parseInt(document.getElementById('yearDropdown').value);
-            }
-            
-            if (!month || !day || !year) {
-                return showError("Please select a complete date.");
-            }
-            
-            // Validate date
+// Update calendar when dropdowns change
+document.getElementById('monthDropdown').addEventListener('change', updateDateFromDropdowns);
+document.getElementById('dayDropdown').addEventListener('change', updateDateFromDropdowns);
+document.getElementById('yearDropdown').addEventListener('change', updateDateFromDropdowns);
+
+function updateDateFromDropdowns() {
+    const month = document.getElementById('monthDropdown').value;
+    const day = document.getElementById('dayDropdown').value;
+    const year = document.getElementById('yearDropdown').value;
+    
+    if (month && day && year) {
+        // Validate the date before updating
+        if (isValidDate(parseInt(month), parseInt(day), parseInt(year))) {
             const date = new Date(year, month - 1, day);
-            if (date.getMonth() !== month - 1 || date.getDate() !== day) {
-                return showError("Please select a valid date.");
-            }
-            
-            displayZodiacInfo(getZodiacSign(month, day));
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            document.getElementById('birthday-input').value = `${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+            clearError();
+        } else {
+            document.getElementById('birthday-input').value = '';
+            showError(getDateErrorMessage(parseInt(month), parseInt(day), parseInt(year)));
         }
+    } else {
+        document.getElementById('birthday-input').value = '';
+        clearError();
+    }
+}
 
-        function getZodiacSign(month, day) {
-            if ((month === 3 && day >= 21) || (month === 4 && day <= 20)) return 'aries';
-            if ((month === 4 && day >= 21) || (month === 5 && day <= 20)) return 'taurus';
-            if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) return 'gemini';
-            if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) return 'cancer';
-            if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return 'leo';
-            if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return 'virgo';
-            if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) return 'libra';
-            if ((month === 10 && day >= 23) || (month === 11 && day <= 22)) return 'scorpio';
-            if ((month === 11 && day >= 23) || (month === 12 && day <= 21)) return 'sagittarius';
-            if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) return 'capricorn';
-            if ((month === 1 && day >= 20) || (month === 2 && day <= 19)) return 'aquarius';
-            if ((month === 2 && day >= 20) || (month === 3 && day <= 20)) return 'pisces';
-            return null;
-        }
+// Function to validate date
+function isValidDate(month, day, year) {
+    // Check if the date is valid
+    const date = new Date(year, month - 1, day);
+    
+    // Check if the date components match what was provided
+    // This catches invalid dates like February 30, April 31, etc.
+    return date.getFullYear() === year && 
+           date.getMonth() === month - 1 && 
+           date.getDate() === day;
+}
+
+// Function to get appropriate error message for invalid dates
+function getDateErrorMessage(month, day, year) {
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const monthName = monthNames[month - 1];
+    
+    // Check for February
+    if (month === 2) {
+        const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+        const maxDays = isLeapYear ? 29 : 28;
         
-        function displayZodiacInfo(sign) {
-            if (!sign) {
-                showError('Could not determine zodiac sign. Please check your birth date.');
-                return;
-            }
-            const data = zodiacData[sign];
-            const capitalizedSign = sign.charAt(0).toUpperCase() + sign.slice(1);
-            document.getElementById('zodiacName').textContent = capitalizedSign;
-            document.getElementById('element').textContent = data.element;
-            document.getElementById('dates').textContent = data.dates;
-            document.getElementById('compatibility').textContent = data.compatibility;
-            document.getElementById('traits').textContent = data.traits;
-            document.getElementById('symbol').textContent = data.symbol;
-            document.getElementById('infoLink').href = data.link;
-            document.getElementById('resultSection').style.display = 'block';
-            document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+        if (day > maxDays) {
+            return isLeapYear ? 
+                `February only has 29 days in leap years (${year} is a leap year).` : 
+                `February only has 28 days in non-leap years (${year} is not a leap year).`;
         }
+    }
+    
+    // Check for months with 30 days
+    if ([4, 6, 9, 11].includes(month) && day > 30) {
+        return `${monthName} only has 30 days.`;
+    }
+    
+    // Generic error message for other invalid dates
+    return `${monthName} ${day}, ${year} is not a valid date.`;
+}
+
+// Zodiac logic
+const zodiacData = {
+    aries: {dates: "March 21 – April 20",element: "Fire",compatibility: "Most compatible with Leo and Sagittarius",traits: "Passionate, Competitive, Bold, Independent, Impulsive",symbol: "Ram ♈",link: "https://www.almanac.com/content/aries-zodiac-sign"},
+    taurus: {dates: "April 21 – May 20",element: "Earth",compatibility: "Most compatible with Virgo and Capricorn",traits: "Grounded, Sensual, Practical, Loyal, Persistent",symbol: "Bull ♉",link: "https://www.almanac.com/taurus-zodiac-sign"},
+    gemini: {dates: "May 21 – June 20",element: "Air",compatibility: "Aries and Aquarius",traits: "Witty, Social, Engaging, Intelligent, Well-Rounded",symbol: "Twins ♊",link: "https://www.almanac.com/gemini-zodiac-sign"},
+    cancer: {dates: "June 21 – July 22",element: "Water",compatibility: "Most compatible with Taurus and Pisces",traits: "Nurturing, Protective, Emotional, Determined, Intuitive",symbol: "Crab ♋",link: "https://www.almanac.com/cancer-zodiac-sign"},
+    leo: {dates: "July 23 – August 22",element: "Fire",compatibility: "Most compatible with Aries and Sagittarius",traits: "Confident, Generous, Loyal, Creative, Strong Willed",symbol: "Lion ♌",link: "https://www.almanac.com/leo-zodiac-sign"},
+    virgo: {dates: "August 23 – September 22",element: "Earth",compatibility: "Most compatible with Taurus and Pisces",traits: "Nurturing, Grounded, Practical, Calm, Organized",symbol: "Maiden ♍",link: "https://www.almanac.com/virgo-zodiac-sign"},
+    libra: {dates: "September 23 – October 22",element: "Air",compatibility: "Most compatible with Leo and Gemini",traits: "Outgoing, Intelligent, Tactful, Creative, Fair-minded",symbol: "Scales ♎",link: "https://www.almanac.com/libra-zodiac-sign"},
+    scorpio: {dates: "October 23 – November 22",element: "Water",compatibility: "Most compatible with Cancer and Capricorn",traits: "Protective, Loyal, Charismatic, Intuitive, Stubborn ",symbol: "Scorpion ♏",link: "https://www.almanac.com/content/scorpio-zodiac-sign"},
+    sagittarius: {dates: "November 23 – December 21",element: "Fire",compatibility: "Most compatible with Aries and Leo",traits: "Optimistic, Honest, Generous, Fun-loving, Blunt",symbol: "Archer ♐",link: "https://www.almanac.com/content/sagittarius-zodiac-sign"},
+    capricorn: {dates: "December 22 – January 19",element: "Earth",compatibility: "Most compatible with Taurus and Virgo",traits: "Practical, Responsible, Loyal, Patient, Disciplined",symbol: "Goat ♑",link: "https://www.almanac.com/capricorn-zodiac-sign"},
+    aquarius: {dates: "January 20 – February 19",element: "Air",compatibility: "Most compatible with Sagittarius and Aquarius",traits: "Independent, Intelligent, Friendly, Compassionate, Outgoing",symbol: "Water Bearer ♒",link: "https://www.almanac.com/aquarius-zodiac-sign"},
+    pisces: {dates: "February 20 – March 20",element: "Water",compatibility: "Most compatible with Leo and Sagittarius",traits: "Passionate, Competitive, Bold, Independent, Impulsive",symbol: "Fish ♓",link: "https://www.almanac.com/pisces-zodiac-sign"}
+};
+
+function showError(message) {
+    document.getElementById('errorMessage').textContent = message;
+}
+
+function clearError() {
+    document.getElementById('errorMessage').textContent = '';
+}
+
+function clearResults() {
+    document.getElementById('resultSection').style.display = 'none';
+    document.getElementById('birthday-input').value = '';
+    
+    // Clear dropdowns
+    document.getElementById('monthDropdown').value = '';
+    document.getElementById('dayDropdown').value = '';
+    document.getElementById('yearDropdown').value = '';
+    
+    clearError();
+    selectedDate = null;
+}
+
+function findZodiac() {
+    clearError();
+    let month, day, year;
+    
+    // Try to get values from input field first
+    const birthdayInput = document.getElementById('birthday-input').value;
+    if (birthdayInput) {
+        const dateParts = birthdayInput.split(' ');
+        if (dateParts.length === 3) {
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            month = monthNames.indexOf(dateParts[0]) + 1;
+            day = parseInt(dateParts[1].replace(',', ''));
+            year = parseInt(dateParts[2]);
+        }
+    }
+    
+    // If not from input, get from dropdowns
+    if (!month || !day || !year) {
+        month = parseInt(document.getElementById('monthDropdown').value);
+        day = parseInt(document.getElementById('dayDropdown').value);
+        year = parseInt(document.getElementById('yearDropdown').value);
+    }
+    
+    if (!month || !day || !year) {
+        return showError("Please select a complete date.");
+    }
+    
+    // Validate date using our new validation function
+    if (!isValidDate(month, day, year)) {
+        return showError(getDateErrorMessage(month, day, year));
+    }
+    
+    displayZodiacInfo(getZodiacSign(month, day));
+}
+
+function getZodiacSign(month, day) {
+    if ((month === 3 && day >= 21) || (month === 4 && day <= 20)) return 'aries';
+    if ((month === 4 && day >= 21) || (month === 5 && day <= 20)) return 'taurus';
+    if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) return 'gemini';
+    if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) return 'cancer';
+    if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return 'leo';
+    if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return 'virgo';
+    if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) return 'libra';
+    if ((month === 10 && day >= 23) || (month === 11 && day <= 22)) return 'scorpio';
+    if ((month === 11 && day >= 23) || (month === 12 && day <= 21)) return 'sagittarius';
+    if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) return 'capricorn';
+    if ((month === 1 && day >= 20) || (month === 2 && day <= 19)) return 'aquarius';
+    if ((month === 2 && day >= 20) || (month === 3 && day <= 20)) return 'pisces';
+    return null;
+}
+
+function displayZodiacInfo(sign) {
+    if (!sign) {
+        showError('Could not determine zodiac sign. Please check your birth date.');
+        return;
+    }
+    const data = zodiacData[sign];
+    const capitalizedSign = sign.charAt(0).toUpperCase() + sign.slice(1);
+    document.getElementById('zodiacName').textContent = capitalizedSign;
+    document.getElementById('element').textContent = data.element;
+    document.getElementById('dates').textContent = data.dates;
+    document.getElementById('compatibility').textContent = data.compatibility;
+    document.getElementById('traits').textContent = data.traits;
+    document.getElementById('symbol').textContent = data.symbol;
+    document.getElementById('infoLink').href = data.link;
+    document.getElementById('resultSection').style.display = 'block';
+    document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+}
     </script>
 </body>
 </html>
